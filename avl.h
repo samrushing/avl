@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.h,v 1.3 1995/11/16 22:46:42 rushing Exp rushing $ */
+/* $Id: avl.h,v 1.4 1995/11/21 23:46:24 rushing Exp rushing $ */
 
 typedef struct avl_node_tag {
   void *		key;
@@ -65,6 +65,19 @@ int iterate_index_range (avl_tree * tree,
 			 unsigned long low,
 			 unsigned long high,
 			 void * iter_arg);
+
+int get_span_by_key (avl_tree * tree,
+		     void * key,
+		     int (*compare_fun) (void * a, void * b),
+		     unsigned long * low,
+		     unsigned long * high);
+
+int get_span_by_two_keys (avl_tree * tree,
+			  void * key_a,
+			  void * key_b,
+			  int (*compare_fun) (void * a, void * b),
+			  unsigned long * low,
+			  unsigned long * high);
 
 int verify (avl_tree * tree);
 
