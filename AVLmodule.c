@@ -24,7 +24,7 @@
  *
  */
 
-/* $Id: AVLmodule.c,v 2.2 1997/02/21 23:22:57 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 2.3 1997/02/22 00:11:53 rushing Exp rushing $ */
 
 
 #include "Python.h"
@@ -146,7 +146,7 @@ avl_tree_remove (avl_treeobject *self, PyObject *args)
   } else {
     Py_INCREF(val);
     if (remove_by_key (self->tree, (void *) val, avl_tree_key_free_fun) != 0) {
-      /* can I legally DECREF val here? */
+      Py_DECREF(val);
       PyErr_SetString (ErrorObject, "error while removing item");
       return NULL;
     } else {
