@@ -4,7 +4,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: AVLmodule.c,v 1.5 1995/11/23 02:08:07 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 1.6 1995/11/23 02:13:08 rushing Exp rushing $ */
 
 #include "Python.h"
 
@@ -567,9 +567,7 @@ avl_tree_concat (avl_treeobject *self, avl_treeobject *bb)
 }
 
 static PyObject *
-avl_tree_repeat(self, n)
-	avl_treeobject *self;
-	int n;
+avl_tree_repeat(avl_treeobject * self, int n)
 {
   PyErr_SetString (PyExc_TypeError,"repeat operation undefined");
   return NULL;
@@ -616,7 +614,7 @@ avl_tree_slice (avl_treeobject *self, int ilow, int ihigh)
    * ask for the -40th element of a 10-element tree
    */
 
-  if ((ilow < 0) || (ihigh > self->tree->length)) {
+  if ((ilow < 0) || ((unsigned long) ihigh > self->tree->length)) {
     PyErr_SetString (PyExc_IndexError, "tree index out of range");
     return NULL;
   }
