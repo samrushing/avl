@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.c,v 1.1 1995/11/15 20:39:26 rushing Exp rushing $ */
+/* $Id: avl.c,v 1.2 1995/11/15 20:53:37 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -721,7 +721,7 @@ verify_rank (avl_node * node)
   if (!node) {
     return 0;
   } else {
-    long num_left=0, num_right=0;
+    unsigned long num_left=0, num_right=0;
     if (node->left) {
       num_left = verify_rank (node->left);
     }
