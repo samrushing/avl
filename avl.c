@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.c,v 2.1 1997/02/21 23:10:05 rushing Exp rushing $ */
+/* $Id: avl.c,v 2.2 1997/02/21 23:23:11 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -810,7 +810,7 @@ get_span_by_two_keys (avl_tree * tree,
   if (low_node) {
     avl_node * left;
     /* search left */
-    left = get_predecessor (low_node);
+    left = low_node;
     while ((i > 0) && (tree->compare_fun (tree->compare_arg, low_key, left->key) == 0)) {
       left = get_predecessor (left);
       i = i - 1;
