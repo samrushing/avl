@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.h,v 1.1 1995/11/15 20:39:50 rushing Exp rushing $ */
+/* $Id: avl.h,v 1.2 1995/11/16 05:53:16 rushing Exp rushing $ */
 
 typedef struct avl_node_tag {
   void *		key;
@@ -17,13 +17,13 @@ typedef struct avl_node_tag {
   unsigned long		rank_and_balance;
 } avl_node;
 
-#define GET_BALANCE(n)	(((n)->rank_and_balance & 3) - 1)
+#define GET_BALANCE(n)	((int)(((n)->rank_and_balance & 3) - 1))
 
 #define GET_RANK(n)	(((n)->rank_and_balance >> 2))
 
 #define SET_BALANCE(n,b) \
   ((n)->rank_and_balance) = \
-    (((n)->rank_and_balance & (~3)) | ((b) + 1))
+    (((n)->rank_and_balance & (~3)) | ((int)((b) + 1)))
 
 #define SET_RANK(n,r) \
   ((n)->rank_and_balance) = \
