@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: AVLmodule.c,v 1.1 1995/11/15 20:41:43 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 1.2 1995/11/16 10:02:30 rushing Exp rushing $ */
 
 #include "Python.h"
 
@@ -56,7 +56,7 @@ avl_tree_insert(avl_treeobject * self, PyObject * args)
 }
 
 static char avl_tree_remove__doc__[] = 
-"remove an item from the AVL tree"
+"Remove an item from the tree"
 ;
 
 /* remove_by_key's free_key_fun callback */
@@ -93,7 +93,7 @@ avl_tree_remove (avl_treeobject *self, PyObject *args)
 }
 
 static char avl_tree_lookup__doc__[] =
-"return the first object comparing equal to the <key> argument";
+"Return the first object comparing equal to the <key> argument";
 
 static PyObject *
 avl_tree_lookup (avl_treeobject * self, PyObject * args)
@@ -125,6 +125,40 @@ avl_tree_lookup (avl_treeobject * self, PyObject * args)
       Py_DECREF (key_val);
       PyErr_SetObject (PyExc_KeyError, key_val);
       return NULL;
+    }
+  }
+}
+
+static char avl_tree_has_key__doc__[] =
+"Does the tree contain an item comparing equal to <key>?";
+
+static PyObject *
+avl_tree_has_key (avl_treeobject * self, PyObject * args)
+{
+  PyObject * key_val;
+  PyObject * return_value;
+  int result;
+
+  if (!PyArg_ParseTuple (args, "O", &key_val)) {
+    return NULL;
+  } else {
+    Py_INCREF (key_val);
+    if (self->tree->length) {
+      result = get_item_by_key (self->tree,
+				(void *) key_val,
+				(int(*)(void *, void *)) PyObject_Compare,
+				(void **) &return_value);
+      if (result == 0) {
+	/* success */
+	Py_DECREF (key_val);
+	return (Py_BuildValue ("i", 1));
+      } else {
+	Py_DECREF (key_val);
+	return Py_BuildValue ("i", 0);
+      }
+    } else {
+      Py_DECREF (key_val);
+      return (Py_BuildValue ("i", 0));
     }
   }
 }
@@ -225,6 +259,7 @@ static struct PyMethodDef avl_tree_methods[] = {
   {"remove",	(PyCFunction)avl_tree_remove,	1,	avl_tree_remove__doc__},
   {"iterate",	(PyCFunction)avl_tree_iterate,	1,	avl_tree_iterate__doc__},
   {"lookup",	(PyCFunction)avl_tree_lookup,	1,	avl_tree_lookup__doc__},
+  {"has_key",	(PyCFunction)avl_tree_has_key,	1,	avl_tree_has_key__doc__},
 #ifdef DEBUG_AVL
   {"verify",	(PyCFunction)avl_tree_verify,	1,	avl_tree_verify__doc__},
   {"print_internal_structure",	(PyCFunction)avl_tree_print_internal_structure,	1,	avl_tree_print_internal_structure__doc__},
