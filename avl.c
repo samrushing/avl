@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.c,v 1.5 1995/11/16 08:30:33 rushing Exp rushing $ */
+/* $Id: avl.c,v 1.6 1995/11/16 08:31:26 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -629,6 +629,28 @@ get_predecessor (avl_node * node)
     while (node->parent) {
       node = node->parent;
       if (child == node->right) {
+	return node;
+      }
+      child = node;
+    }
+    return node;
+  }
+}
+
+avl_node *
+get_successor (avl_node * node)
+{
+  if (node->right) {
+    node = node->right;
+    while (node->left) {
+      node = node->left;
+    }
+    return node;
+  } else {
+    avl_node * child = node;
+    while (node->parent) {
+      node = node->parent;
+      if (child == node->left) {
 	return node;
       }
       child = node;
