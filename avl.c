@@ -22,7 +22,7 @@
  *
  */
 
-/* $Id: avl.c,v 2.4 1997/02/21 23:54:37 rushing Exp rushing $ */
+/* $Id: avl.c,v 2.5 1997/02/22 00:11:00 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -350,6 +350,7 @@ remove_by_key (avl_tree * tree,
 	/* Oops! now we have to undo the rank changes
 	 * all the way up the tree
 	 */
+	SET_RANK(x, (GET_RANK (x) + 1));
 	while (x != tree->root->right) {
 	  if (x->parent->left == x) {
 	    SET_RANK(x->parent, (GET_RANK (x->parent) + 1));
@@ -363,6 +364,7 @@ remove_by_key (avl_tree * tree,
       if (x->right) {
 	x = x->right;
       } else {
+	SET_RANK(x, (GET_RANK (x) + 1));
 	while (x != tree->root->right) {
 	  if (x->parent->left == x) {
 	    SET_RANK(x->parent, (GET_RANK (x->parent) + 1));
