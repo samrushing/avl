@@ -22,7 +22,7 @@
  *
  */
 
-/* $Id: avl.c,v 2.7 1998/10/04 15:39:14 rushing Exp rushing $ */
+/* $Id: avl.c,v 2.8 2001/01/28 21:09:42 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -342,6 +342,7 @@ remove_by_key (avl_tree * tree,
   if (!x) {
     return -1;
   }
+  /* find the node to remove */
   while (1) {
     int compare_result = tree->compare_fun (tree->compare_arg, key, x->key);
     if (compare_result < 0) {
@@ -367,11 +368,9 @@ remove_by_key (avl_tree * tree,
       }
     } else if (compare_result > 0) {
       /* move right */
-      SET_RANK (x, (GET_RANK (x) - 1));
       if (x->right) {
 	x = x->right;
       } else {
-	SET_RANK(x, (GET_RANK (x) + 1));
 	while (x != tree->root->right) {
 	  if (x->parent->left == x) {
 	    SET_RANK(x->parent, (GET_RANK (x->parent) + 1));
