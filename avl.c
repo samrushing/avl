@@ -22,7 +22,7 @@
  *
  */
 
-/* $Id: avl.c,v 2.6 1998/03/04 02:24:46 rushing Exp rushing $ */
+/* $Id: avl.c,v 2.7 1998/10/04 15:39:14 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -367,6 +367,7 @@ remove_by_key (avl_tree * tree,
       }
     } else if (compare_result > 0) {
       /* move right */
+      SET_RANK (x, (GET_RANK (x) - 1));
       if (x->right) {
 	x = x->right;
       } else {
