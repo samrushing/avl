@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: $ */
+/* $Id: avl.h,v 1.1 1995/11/15 20:39:50 rushing Exp rushing $ */
 
 typedef struct avl_node_tag {
   void *		key;
@@ -36,6 +36,7 @@ typedef struct {
 } avl_tree;
 
 avl_tree * new_avl_tree (void);
+avl_node * new_avl_node (void * key, avl_node * parent);
 
 void free_avl_tree (avl_tree * tree, int(*free_key_fun) (void * key));
 
