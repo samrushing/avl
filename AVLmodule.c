@@ -4,15 +4,8 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: AVLmodule.c,v 1.8 1995/11/23 02:24:55 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 1.9 1995/11/28 20:34:54 rushing Exp rushing $ */
 
-/*
- * IDEA: use an 'index cache' where whenever a lookup is done
- * by index, cache the resultant node, so that if the next lookup
- * is simply <i+1>, we just get_successor() to find it.
- * Of course, invalidate this node cache whenever there's been
- * an insertion or deletion.
- */
 
 #include "Python.h"
 
@@ -30,9 +23,25 @@ static PyObject *ErrorObject;
 
 /* Declarations for objects of type AVL tree */
 
+/* We use an 'index cache'.  Whenever a lookup is done by index, we
+ * cache the resultant node, so that if the next lookup is simply
+ * <i+1>, we just get_successor() to find it.  Of course, invalidate
+ * this node cache whenever there's been an insertion or deletion.
+ * 
+ * This seems to speed up iterating over a large tree in an indirect
+ * manner: If I create a tree of 100,000 nodes, the first few
+ * iterations seem to take longer.  I think this is because the entire
+ * tree needs to be paged into memory in order to access each element
+ * individually.  The node cache is friendlier, in that only a small
+ * number of nodes need be found in order to get the inorder
+ * successor.
+ */
+
 typedef struct {
 	PyObject_HEAD
-	avl_tree * tree;
+	avl_tree	* tree;
+	avl_node	* node_cache;
+	int		cache_index;
 } avl_treeobject;
 
 staticforward PyTypeObject Avl_treetype;
@@ -67,6 +76,7 @@ avl_tree_insert(avl_treeobject * self, PyObject * args)
       PyErr_SetString (ErrorObject, "error while inserting item");
       return NULL;
     } else {
+      self->node_cache = NULL;
       Py_INCREF(Py_None);
       return Py_None;
     }
@@ -103,6 +113,7 @@ avl_tree_remove (avl_treeobject *self, PyObject *args)
       PyErr_SetString (ErrorObject, "error while removing item");
       return NULL;
     } else {
+      self->node_cache = NULL;
       Py_DECREF (val);
       Py_INCREF(Py_None);
       return Py_None;
@@ -484,6 +495,8 @@ newavl_treeobject(void)
     PyMem_DEL (self);
     return NULL;
   }
+  self->node_cache = NULL;
+  self->cache_index = 0;
   return self;
 }
 
@@ -658,6 +671,13 @@ avl_tree_item (avl_treeobject *self, int i)
     return NULL;
   } else {
     /* get the python object, and store in <value> */
+
+    /* index cache */
+    if (self->node_cache && (index == (self->cache_index + 1))) {
+      self->node_cache = get_successor (self->node_cache);
+      self->cache_index++;
+      value = self->node_cache->key;
+    }
     if (get_item_by_index (self->tree, index, &value) != 0) {
       PyErr_SetString (ErrorObject, "error while accessing item");
       return NULL;
