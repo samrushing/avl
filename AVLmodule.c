@@ -4,7 +4,15 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: AVLmodule.c,v 1.7 1995/11/23 02:15:21 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 1.8 1995/11/23 02:24:55 rushing Exp rushing $ */
+
+/*
+ * IDEA: use an 'index cache' where whenever a lookup is done
+ * by index, cache the resultant node, so that if the next lookup
+ * is simply <i+1>, we just get_successor() to find it.
+ * Of course, invalidate this node cache whenever there's been
+ * an insertion or deletion.
+ */
 
 #include "Python.h"
 
@@ -135,6 +143,63 @@ avl_tree_lookup (avl_treeobject * self, PyObject * args)
       Py_DECREF (key_val);
       PyErr_SetObject (PyExc_KeyError, key_val);
       return NULL;
+    }
+  }
+}
+
+static char avl_tree_span__doc__[] =
+"t.span (key) => (low, high)\n"
+"Returns a pair of indices (low, high) that span the range of <key>";
+
+static PyObject *
+avl_tree_span (avl_treeobject * self, PyObject * args)
+{
+  PyObject * low_key, * high_key = NULL;
+  unsigned long low, high;
+  int result;
+
+  if (!PyArg_ParseTuple (args, "O|O", &low_key, &high_key)) {
+    return NULL;
+  } else {
+    if (self->tree->length) {
+      /* only one key was specified */
+      if (!high_key) {
+	Py_INCREF (low_key);
+	result = get_span_by_key (self->tree,
+				  (void *) low_key,
+				  (int(*)(void *, void *)) PyObject_Compare,
+				  &low,
+				  &high);
+	Py_DECREF (low_key);
+	if (result == 0) {
+	  /* success */
+	  return Py_BuildValue ("(ii)", (int) low, (int) high);
+	} else {
+	  PyErr_SetString (ErrorObject, "error while locating key span");
+	  return NULL;
+	}
+      } else {
+	/* they specified two keys */
+	Py_INCREF (low_key);
+	Py_INCREF (high_key);
+	result = get_span_by_two_keys (self->tree,
+				       (void *) low_key,
+				       (void *) high_key,
+				       (int(*)(void *, void*)) PyObject_Compare,
+				       &low,
+				       &high);
+	Py_DECREF (low_key);
+	Py_DECREF (high_key);
+	if (result == 0) {
+	  /* success */
+	  return Py_BuildValue ("(ii)", (int) low, (int) high);
+	} else {
+	  PyErr_SetString (ErrorObject, "error while locate key span");
+	  return NULL;
+	}
+      }
+    } else {
+      return Py_BuildValue ("(ii)", 0, 0);
     }
   }
 }
@@ -393,6 +458,7 @@ static struct PyMethodDef avl_tree_methods[] = {
   {"lookup",	(PyCFunction)avl_tree_lookup,	1,	avl_tree_lookup__doc__},
   {"has_key",	(PyCFunction)avl_tree_has_key,	1,	avl_tree_has_key__doc__},
   {"slice_as_list",	(PyCFunction)avl_tree_slice_as_list,1,	avl_tree_slice_as_list__doc__},
+  {"span",	(PyCFunction)avl_tree_span,	1,	avl_tree_span__doc__},
   {"slice_as_tree",	(PyCFunction)avl_tree_from_tree,1,	avl_tree_from_tree__doc__},
 #ifdef DEBUG_AVL
   {"verify",	(PyCFunction)avl_tree_verify,	1,	avl_tree_verify__doc__},
