@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: AVLmodule.c,v 1.2 1995/11/16 10:02:30 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 1.3 1995/11/16 22:47:20 rushing Exp rushing $ */
 
 #include "Python.h"
 
@@ -42,13 +42,14 @@ avl_tree_insert(avl_treeobject * self, PyObject * args)
   if (!PyArg_ParseTuple(args, "O", &val)) {
     return NULL;
   } else {
+    Py_INCREF (val);
     if (insert_by_key (self->tree,
 		       (void *) val,
 		       (int(*)(void *, void *)) PyObject_Compare) != 0) {
+      Py_DECREF (val);
       PyErr_SetString (ErrorObject, "error while inserting item");
       return NULL;
     } else {
-      Py_INCREF(val);
       Py_INCREF(Py_None);
       return Py_None;
     }
@@ -352,53 +353,34 @@ avl_tree_setattr(avl_treeobject *self, char *name, PyObject *v)
 	return -1;
 }
 
-void
-avl_tree_inorder_list_helper (PyObject * list,
-			      long * index,
-			      avl_node * node)
-{
-  if (node->left) {
-    avl_tree_inorder_list_helper (list, index, node->left);
-  }
-  PyList_SetItem (list, (*index)++, (PyObject *)node->key);
-  if (node->right) {
-    avl_tree_inorder_list_helper (list, index, node->right);    
-  }
-}
-
-static PyObject *
-avl_tree_inorder_list (avl_treeobject * self)
-{
-  PyObject * list;
-  long index = 0;
-
-  list = PyList_New (self->tree->length);
-  if (!list) {
-    return NULL;
-  }
-  if (self->tree->length) {
-    avl_tree_inorder_list_helper (list, &index, self->tree->root->right);
-  }
-  return list;
-}
-
 static PyObject *
 avl_tree_repr (avl_treeobject *self)
 {
-  PyObject *s = NULL;
-  PyObject *inorder_list;
-	
-  inorder_list = avl_tree_inorder_list (self);
-  if (!inorder_list) {
-    return NULL;
-  } else {
-    s = (PyObject *) PyObject_Repr (inorder_list);
-    Py_DECREF (inorder_list);
-    if (!s) {
-      return NULL;
-    } else {
-      return s;
+  PyObject * s;
+  PyObject * comma;
+  avl_node * node;
+  unsigned long i;
+
+  if (self->tree->length) {
+    s = PyString_FromString ("[");
+    comma = PyString_FromString (", ");
+    /* find leftmost node */
+    node = self->tree->root->right;
+    while (node->left) {
+      node = node->left;
     }
+    for (i=0; i < self->tree->length; i++) {
+      if (i > 0) {
+	PyString_Concat (&s, comma);
+      }
+      PyString_ConcatAndDel (&s, PyObject_Repr ((PyObject *)node->key));
+      node = get_successor (node);
+    }
+    Py_XDECREF (comma);
+    PyString_ConcatAndDel (&s, PyString_FromString ("]"));
+    return s;
+  } else {
+    return PyString_FromString ("[]");
   }
 }
 
