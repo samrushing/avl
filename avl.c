@@ -2,11 +2,11 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.c,v 1.7 1995/11/21 23:46:44 rushing Exp rushing $ */
+/* $Id: avl.c,v 1.8 1995/11/22 01:23:24 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
- * written in python.  Read that file, not this one.
+ * written in python, 'avl_tree.py'. Read that file first.
  */
 
 #include <stdio.h>
@@ -701,6 +701,141 @@ iterate_index_range (avl_tree * tree,
   return 0;
 }
 
+/* If <key> is present in the tree, return that key's node, and set <*index>
+ * appropriately.  If not, return NULL, and set <*index> to the position
+ * representing the closest preceding value.
+ */
+
+avl_node *
+get_index_by_key (avl_tree * tree,
+		  void * key,
+		  int (*compare_fun) (void * a, void * b),
+		  unsigned long * index)
+{
+  avl_node * x = tree->root->right;
+  unsigned long m = GET_RANK (x);
+
+  while (1) {
+    int compare_result = compare_fun (key, x->key);
+    if (compare_result < 0) {
+      if (x->left) {
+	m = m - GET_RANK(x);
+	x = x->left;
+	m = m + GET_RANK(x);
+      } else {
+	*index = m - 2;
+	return NULL;
+      }
+    } else if (compare_result > 0) {
+      if (x->right) {
+	x = x->right;
+	m = m + GET_RANK(x);
+      } else {
+	*index = m - 1;
+	return NULL;
+      }
+    } else {
+      *index = m - 1;
+      return x;
+    }
+  }
+}
+
+/* return the (low index, high index) pair that spans the given key */
+
+int
+get_span_by_key (avl_tree * tree,
+		 void * key,
+		 int (*compare_fun) (void * a, void * b),
+		 unsigned long * low,
+		 unsigned long * high)
+{
+  unsigned long m, i, j;
+  avl_node * node;
+
+  node = get_index_by_key (tree, key, compare_fun, &m);
+
+  /* did we find an exact match?
+   * if so, we have to search left and right
+   * to find the span, since we know nothing about
+   * the arrangement of like keys.
+   */
+  if (node) {
+    avl_node * left, * right;
+    /* search left */
+    left = get_predecessor (node);
+    i = m;
+    while ((i > 0) && (compare_fun (key, left->key) == 0)) {
+      left = get_predecessor (left);
+      i = i - 1;
+    }
+    /* search right */
+    right = get_successor (node);
+    j = m;
+    while ((j <= tree->length) && (compare_fun (key, right->key) == 0)) {
+      right = get_successor (right);
+      j = j + 1;
+    }
+    *low = i;
+    *high = j + 1;
+    return 0;
+  } else {
+    *low = *high = m;
+  }
+  return 0;
+}
+
+/* return the (low index, high index) pair that spans the given key */
+
+int
+get_span_by_two_keys (avl_tree * tree,
+		      void * low_key,
+		      void * high_key,
+		      int (*compare_fun) (void * a, void * b),
+		      unsigned long * low,
+		      unsigned long * high)
+{
+  unsigned long i, j;
+  avl_node * low_node, * high_node;
+  int order;
+
+  /* we may need to swap them */
+  order = compare_fun (low_key, high_key);
+  if (order > 0) {
+    void * temp = low_key;
+    low_key = high_key;
+    high_key = temp;
+  }
+
+  low_node = get_index_by_key (tree, low_key, compare_fun, &i);
+  high_node = get_index_by_key (tree, high_key, compare_fun, &j);
+
+  if (low_node) {
+    avl_node * left;
+    /* search left */
+    left = get_predecessor (low_node);
+    while ((i > 0) && (compare_fun (low_key, left->key) == 0)) {
+      left = get_predecessor (left);
+      i = i - 1;
+    }
+  }
+  if (high_node) {
+    avl_node * right;
+    /* search right */
+    right = get_successor (high_node);
+    while ((j <= tree->length) && (compare_fun (high_key, right->key) == 0)) {
+      right = get_successor (right);
+      j = j + 1;
+    }
+  } else {
+    j = j + 1;
+  }
+
+  *low = i;
+  *high = j;
+  return 0;
+}
+
 #define MAX(X, Y)  ((X) > (Y) ? (X) : (Y))
 
 long
@@ -759,7 +894,7 @@ verify_rank (avl_node * node)
   }
 }
 
-/* sanity-check the stree */
+/* sanity-check the tree */
 
 int
 verify (avl_tree * tree)
