@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.c,v 1.6 1995/11/16 08:31:26 rushing Exp rushing $ */
+/* $Id: avl.c,v 1.7 1995/11/21 23:46:44 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -63,6 +63,7 @@ free_avl_tree_helper (avl_node * node, int(*free_key_fun) (void * key))
   if (node->right) {
     free_avl_tree_helper (node->right, free_key_fun);
   }
+  free (node);
 }
   
 void
