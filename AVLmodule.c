@@ -4,7 +4,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: AVLmodule.c,v 1.6 1995/11/23 02:13:08 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 1.7 1995/11/23 02:15:21 rushing Exp rushing $ */
 
 #include "Python.h"
 
@@ -872,7 +872,6 @@ avl_newavl(PyObject * self,	/* Not used */
 
 static struct PyMethodDef avl_methods[] = {
 	{"newavl",	avl_newavl,	1,	avl_newavl__doc__},
-	{"from_list",	avl_new_avl_from_list,	1,	avl_new_avl_from_list__doc__},
 	{NULL,		NULL}		/* sentinel */
 };
 
