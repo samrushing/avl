@@ -22,7 +22,7 @@
  *
  */
 
-/* $Id: avl.c,v 2.5 1997/02/22 00:11:00 rushing Exp rushing $ */
+/* $Id: avl.c,v 2.6 1998/03/04 02:24:46 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -306,6 +306,9 @@ get_item_by_key (avl_tree * tree,
 		 void **value_address)
 {
   avl_node * x = tree->root->right;
+  if (!x) {
+    return -1;
+  }
   while (1) {
     int compare_result = tree->compare_fun (tree->compare_arg, key, x->key);
     if (compare_result < 0) {
@@ -336,6 +339,9 @@ remove_by_key (avl_tree * tree,
   int shortened_side, shorter;
   
   x = tree->root->right;
+  if (!x) {
+    return -1;
+  }
   while (1) {
     int compare_result = tree->compare_fun (tree->compare_arg, key, x->key);
     if (compare_result < 0) {
@@ -734,7 +740,12 @@ get_index_by_key (avl_tree * tree,
 		  unsigned long * index)
 {
   avl_node * x = tree->root->right;
-  unsigned long m = GET_RANK (x);
+  unsigned long m;
+  
+  if (!x) {
+    return NULL;
+  }
+  m = GET_RANK (x);
 
   while (1) {
     int compare_result = tree->compare_fun (tree->compare_arg, key, x->key);
@@ -866,6 +877,9 @@ get_item_by_key_most (avl_tree * tree,
   avl_node * x = tree->root->right;
   *value_address = NULL;
 
+  if (!x) {
+    return -1;
+  }
   while (1) {
     int compare_result = tree->compare_fun (tree->compare_arg, key, x->key);
 
@@ -907,6 +921,9 @@ get_item_by_key_least (avl_tree * tree,
   avl_node * x = tree->root->right;
   *value_address = NULL;
 
+  if (!x) {
+    return -1;
+  }
   while (1) {
     int compare_result = tree->compare_fun (tree->compare_arg, key, x->key);
     if (compare_result == 0) {
