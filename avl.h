@@ -2,7 +2,11 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.h,v 1.4 1995/11/21 23:46:24 rushing Exp rushing $ */
+/* $Id: avl.h,v 1.5 1995/11/28 20:33:52 rushing Exp rushing $ */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct avl_node_tag {
   void *		key;
@@ -11,7 +15,7 @@ typedef struct avl_node_tag {
   struct avl_node_tag *	parent;
   /*
    * The lower 2 bits of <rank_and_balance> specify the balance
-   * factor: 00==-1, 01==0, 02==+1.
+   * factor: 00==-1, 01==0, 10==+1.
    * The rest of the bits are used for <rank>
    */
   unsigned long		rank_and_balance;
@@ -29,60 +33,79 @@ typedef struct avl_node_tag {
   ((n)->rank_and_balance) = \
     (((n)->rank_and_balance & 3) | (r << 2))
 
-typedef struct {
+struct _avl_tree;
+
+typedef int (*avl_key_compare_fun_type)	(struct _avl_tree *, void * a, void * b);
+typedef int (*avl_iter_fun_type)	(void * key, void * iter_arg);
+typedef int (*avl_iter_index_fun_type)	(unsigned long index, void * key, void * iter_arg);
+typedef int (*avl_free_key_fun_type)	(void * key);
+typedef int (*avl_key_printer_fun_type)	(char *, void *);
+
+/*
+ * <compare_fun> and <compare_arg> let us associate a particular compare
+ * function with each tree, separately.
+ */
+
+typedef struct _avl_tree {
   avl_node *	root;
   unsigned long	height;
   unsigned long	length;
+  avl_key_compare_fun_type compare_fun;
+  void * compare_arg;
 } avl_tree;
 
-avl_tree * new_avl_tree (void);
+avl_tree * new_avl_tree (avl_key_compare_fun_type compare_fun, void * compare_arg);
 avl_node * new_avl_node (void * key, avl_node * parent);
 
-void free_avl_tree (avl_tree * tree, int(*free_key_fun) (void * key));
+void free_avl_tree (avl_tree * tree,
+		    avl_free_key_fun_type free_key_fun);
 
 int insert_by_key (avl_tree * ob,
-		   void * key,
-		   int (*compare_fun) (void * a, void * b));
+		   void * key);
 
 int remove_by_key (avl_tree * tree,
 		   void * key,
-		   int (*compare_fun) (void * a, void * b),
-		   int (*free_key_fun) (void * key));
+		   avl_free_key_fun_type free_key_fun);
 
-int get_item_by_index (avl_tree * tree, unsigned long index, void ** value_address);
+int get_item_by_index (avl_tree * tree,
+		       unsigned long index,
+		       void ** value_address);
 
 int get_item_by_key (avl_tree * tree,
 		     void * key,
-		     int (*compare_fun) (void * a, void * b),
 		     void **value_address);
 
 int iterate_inorder (avl_tree * tree,
-		     int (*iter_fun)(void *, void *),
+		     avl_iter_fun_type iter_fun,
 		     void * iter_arg);
 
 int iterate_index_range (avl_tree * tree,
-			 int (*iter_fun) (unsigned long, void *, void *),
+			 avl_iter_index_fun_type iter_fun,
 			 unsigned long low,
 			 unsigned long high,
 			 void * iter_arg);
 
 int get_span_by_key (avl_tree * tree,
 		     void * key,
-		     int (*compare_fun) (void * a, void * b),
 		     unsigned long * low,
 		     unsigned long * high);
 
 int get_span_by_two_keys (avl_tree * tree,
 			  void * key_a,
 			  void * key_b,
-			  int (*compare_fun) (void * a, void * b),
 			  unsigned long * low,
 			  unsigned long * high);
 
 int verify (avl_tree * tree);
 
-void print_tree (avl_tree * tree, int(*key_printer)(char *, void *));
+void print_tree (avl_tree * tree,
+		 avl_key_printer_fun_type key_printer);
 
 avl_node * get_predecessor (avl_node * node);
 
 avl_node * get_successor (avl_node * node);
+
+
+#ifdef __cplusplus
+}
+#endif
