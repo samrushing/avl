@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.c,v 1.2 1995/11/15 20:53:37 rushing Exp rushing $ */
+/* $Id: avl.c,v 1.3 1995/11/16 08:27:41 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -809,7 +809,7 @@ print_node (int(*key_printer)(char *, void *),
 	    link_node * link)
 {
   char buffer[256];
-  int width;
+  unsigned int width;
   width = key_printer (buffer, node->key);
 
   if (node->right) {
