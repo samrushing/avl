@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.c,v 1.9 1995/11/28 20:33:26 rushing Exp rushing $ */
+/* $Id: avl.c,v 2.0 1996/02/26 06:18:13 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -102,7 +102,7 @@ insert_by_key (avl_tree * ob,
     s = p = t->right;
 
     while (1) {
-      if (ob->compare_fun (ob, key, p->key) < 1) {
+      if (ob->compare_fun (ob->compare_arg, key, p->key) < 1) {
 	/* move left */
 	SET_RANK (p, (GET_RANK (p) + 1));
 	q = p->left;
@@ -145,13 +145,13 @@ insert_by_key (avl_tree * ob,
     ob->length = ob->length + 1;
     
     /* adjust balance factors */
-    if (ob->compare_fun (ob, key, s->key) < 1) {
+    if (ob->compare_fun (ob->compare_arg, key, s->key) < 1) {
       r = p = s->left;
     } else {
       r = p = s->right;
     }
     while (p != q) {
-      if (ob->compare_fun (ob, key, p->key) < 1) {
+      if (ob->compare_fun (ob->compare_arg, key, p->key) < 1) {
 	SET_BALANCE (p, -1);
 	p = p->left;
       } else {
@@ -162,7 +162,7 @@ insert_by_key (avl_tree * ob,
     
     /* balancing act */
     
-    if (ob->compare_fun (ob, key, s->key) < 1) {
+    if (ob->compare_fun (ob->compare_arg, key, s->key) < 1) {
       a = -1;
     } else {
       a = +1;
@@ -287,7 +287,7 @@ get_item_by_key (avl_tree * tree,
 {
   avl_node * x = tree->root->right;
   while (1) {
-    int compare_result = tree->compare_fun (tree, key, x->key);
+    int compare_result = tree->compare_fun (tree->compare_arg, key, x->key);
     if (compare_result < 0) {
       if (x->left) {
 	x = x->left;
@@ -317,7 +317,7 @@ remove_by_key (avl_tree * tree,
   
   x = tree->root->right;
   while (1) {
-    int compare_result = tree->compare_fun (tree, key, x->key);
+    int compare_result = tree->compare_fun (tree->compare_arg, key, x->key);
     if (compare_result < 0) {
       /* move left
        * We will be deleting from the left, adjust this node's
@@ -715,7 +715,7 @@ get_index_by_key (avl_tree * tree,
   unsigned long m = GET_RANK (x);
 
   while (1) {
-    int compare_result = tree->compare_fun (tree, key, x->key);
+    int compare_result = tree->compare_fun (tree->compare_arg, key, x->key);
     if (compare_result < 0) {
       if (x->left) {
 	m = m - GET_RANK(x);
@@ -763,14 +763,14 @@ get_span_by_key (avl_tree * tree,
     /* search left */
     left = get_predecessor (node);
     i = m;
-    while ((i > 0) && (tree->compare_fun (tree, key, left->key) == 0)) {
+    while ((i > 0) && (tree->compare_fun (tree->compare_arg, key, left->key) == 0)) {
       left = get_predecessor (left);
       i = i - 1;
     }
     /* search right */
     right = get_successor (node);
     j = m;
-    while ((j <= tree->length) && (tree->compare_fun (tree, key, right->key) == 0)) {
+    while ((j <= tree->length) && (tree->compare_fun (tree->compare_arg, key, right->key) == 0)) {
       right = get_successor (right);
       j = j + 1;
     }
@@ -797,7 +797,7 @@ get_span_by_two_keys (avl_tree * tree,
   int order;
 
   /* we may need to swap them */
-  order = tree->compare_fun (tree, low_key, high_key);
+  order = tree->compare_fun (tree->compare_arg, low_key, high_key);
   if (order > 0) {
     void * temp = low_key;
     low_key = high_key;
@@ -811,7 +811,7 @@ get_span_by_two_keys (avl_tree * tree,
     avl_node * left;
     /* search left */
     left = get_predecessor (low_node);
-    while ((i > 0) && (tree->compare_fun (tree, low_key, left->key) == 0)) {
+    while ((i > 0) && (tree->compare_fun (tree->compare_arg, low_key, left->key) == 0)) {
       left = get_predecessor (left);
       i = i - 1;
     }
@@ -820,7 +820,7 @@ get_span_by_two_keys (avl_tree * tree,
     avl_node * right;
     /* search right */
     right = get_successor (high_node);
-    while ((j <= tree->length) && (tree->compare_fun (tree, high_key, right->key) == 0)) {
+    while ((j <= tree->length) && (tree->compare_fun (tree->compare_arg, high_key, right->key) == 0)) {
       right = get_successor (right);
       j = j + 1;
     }

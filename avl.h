@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.h,v 1.5 1995/11/28 20:33:52 rushing Exp rushing $ */
+/* $Id: avl.h,v 2.0 1996/02/26 06:18:13 rushing Exp rushing $ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,7 +35,7 @@ typedef struct avl_node_tag {
 
 struct _avl_tree;
 
-typedef int (*avl_key_compare_fun_type)	(struct _avl_tree *, void * a, void * b);
+typedef int (*avl_key_compare_fun_type)	(void * compare_arg, void * a, void * b);
 typedef int (*avl_iter_fun_type)	(void * key, void * iter_arg);
 typedef int (*avl_iter_index_fun_type)	(unsigned long index, void * key, void * iter_arg);
 typedef int (*avl_free_key_fun_type)	(void * key);
@@ -47,11 +47,11 @@ typedef int (*avl_key_printer_fun_type)	(char *, void *);
  */
 
 typedef struct _avl_tree {
-  avl_node *	root;
-  unsigned long	height;
-  unsigned long	length;
-  avl_key_compare_fun_type compare_fun;
-  void * compare_arg;
+  avl_node *			root;
+  unsigned long			height;
+  unsigned long			length;
+  avl_key_compare_fun_type	compare_fun;
+  void * 			compare_arg;
 } avl_tree;
 
 avl_tree * new_avl_tree (avl_key_compare_fun_type compare_fun, void * compare_arg);

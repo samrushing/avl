@@ -4,18 +4,11 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: AVLmodule.c,v 1.10 1995/11/28 20:54:36 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 2.0 1996/02/26 06:18:13 rushing Exp rushing $ */
 
 
 #include "Python.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include "avl.h"
-#ifdef __cplusplus
-}
-#endif
 
 static PyObject *ErrorObject;
 
@@ -57,9 +50,12 @@ static avl_treeobject * avl_copy_avl_tree (avl_treeobject * source);
 /* ---------------------------------------------------------------- */
 
 int
-avl_key_compare_for_python (avl_tree * tree, void * a, void * b)
+avl_key_compare_for_python (void * compare_arg, void * a, void * b)
 {
-  avl_treeobject * self = (avl_treeobject *) tree->compare_arg;
+  avl_treeobject * self = (avl_treeobject *) compare_arg;
+  fprintf (stderr, "avl_key_compare_for_python, compare_arg:%p\n", compare_arg);
+  fprintf (stderr, "self->compare_function: %p\n", self->compare_function);
+
   if (!self->compare_function) {
     return PyObject_Compare ((PyObject *) a, (PyObject *) b);
   } else {
@@ -452,11 +448,16 @@ newavl_treeobject (PyObject * compare_function)
 {
   avl_treeobject *self;
 	
+  fprintf (stderr, "newavl_treeobject: compare_function=%p\n", compare_function);
+
   self = PyObject_NEW(avl_treeobject, &Avl_treetype);
   if (self == NULL) {
     return NULL;
   }
-  self->tree = new_avl_tree(avl_key_compare_for_python, (void *) self);
+
+  fprintf (stderr, "  self=%p\n", self);
+
+  self->tree = new_avl_tree (avl_key_compare_for_python, (void *) self);
   if (!self->tree) {
     PyMem_DEL (self);
     return NULL;
@@ -464,6 +465,7 @@ newavl_treeobject (PyObject * compare_function)
   self->node_cache = NULL;
   self->cache_index = 0;
   self->compare_function = compare_function;
+  Py_XINCREF (compare_function);
   return self;
 }
 
@@ -669,7 +671,7 @@ avl_tree_slice (avl_treeobject *self, int ilow, int ihigh)
     return NULL;
   }
 
-  new_tree = newavl_treeobject(NULL);
+  new_tree = newavl_treeobject (self->compare_function);
   if (!new_tree) {
     return NULL;
   }
@@ -784,7 +786,7 @@ avl_copy_avl_tree (avl_treeobject * source)
 {
   avl_treeobject * dest;
   
-  if (!(dest = newavl_treeobject(NULL))) {
+  if (!(dest = newavl_treeobject (source->compare_function))) {
     return NULL;
   } else if (source->tree->length) {
     if (avl_copy_avl_node (source->tree->root->right,
@@ -863,10 +865,11 @@ avl_new_avl_from_list (PyObject * self, /* not used */
 		       PyObject * args)
 {
   PyObject * list;
+  PyObject * compare_function = NULL;
   avl_treeobject * tree;
   unsigned int length;
 
-  if (!PyArg_ParseTuple (args, "O!", &PyList_Type, &list)) {
+  if (!PyArg_ParseTuple (args, "O!|O", &PyList_Type, &list, &compare_function)) {
     return NULL;
   }
   /* sort the list */
@@ -874,7 +877,7 @@ avl_new_avl_from_list (PyObject * self, /* not used */
     return NULL;
   }
 
-  tree = newavl_treeobject(NULL);
+  tree = newavl_treeobject (compare_function);
   if (!tree) {
     return NULL;
   }
@@ -896,6 +899,7 @@ static char avl_newavl__doc__[] =
 "Given a list, it will return a new tree containing the elements\n"
 "  of the list, and will sort the list as a side-effect\n"
 "Given a tree, will return a copy of the original tree\n"
+"An optional second argument is a key-comparison function\n"
 ;
 
 static PyObject *
@@ -909,7 +913,7 @@ avl_newavl(PyObject * self,	/* Not used */
     return NULL;
   }
   if (!arg || arg == Py_None) {
-    return (PyObject *) newavl_treeobject(compare_function);
+    return (PyObject *) newavl_treeobject (compare_function);
   } else if (PyList_Check(arg)) {
     return avl_new_avl_from_list ((PyObject *) NULL, args);
   } else if (is_avl_tree_object (arg)) {
