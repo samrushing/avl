@@ -4,7 +4,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: AVLmodule.c,v 1.4 1995/11/22 01:26:56 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 1.5 1995/11/23 02:08:07 rushing Exp rushing $ */
 
 #include "Python.h"
 
@@ -562,8 +562,8 @@ avl_tree_concat (avl_treeobject *self, avl_treeobject *bb)
       bb_node = get_successor (bb_node);
     }
     self_copy->tree->length += bb->tree->length;
-    return (PyObject *) self_copy;
   }
+  return (PyObject *) self_copy;
 }
 
 static PyObject *
