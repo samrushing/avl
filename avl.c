@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.c,v 1.4 1995/11/16 08:28:49 rushing Exp rushing $ */
+/* $Id: avl.c,v 1.5 1995/11/16 08:30:33 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -758,7 +758,7 @@ verify (avl_tree * tree)
 typedef struct _link_node {
   struct _link_node	* parent;
   char			direction;
-  unsigned int		width;
+  int			width;
 } link_node;  
 
 char balance_chars[3] = {'\\', '-', '/'};
