@@ -4,7 +4,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: AVLmodule.c,v 2.0 1996/02/26 06:18:13 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 2.1 1997/02/21 23:10:13 rushing Exp rushing $ */
 
 
 #include "Python.h"
@@ -53,8 +53,6 @@ int
 avl_key_compare_for_python (void * compare_arg, void * a, void * b)
 {
   avl_treeobject * self = (avl_treeobject *) compare_arg;
-  fprintf (stderr, "avl_key_compare_for_python, compare_arg:%p\n", compare_arg);
-  fprintf (stderr, "self->compare_function: %p\n", self->compare_function);
 
   if (!self->compare_function) {
     return PyObject_Compare ((PyObject *) a, (PyObject *) b);
@@ -219,12 +217,84 @@ avl_tree_span (avl_treeobject * self, PyObject * args)
 	  /* success */
 	  return Py_BuildValue ("(ii)", (int) low, (int) high);
 	} else {
-	  PyErr_SetString (ErrorObject, "error while locate key span");
+	  PyErr_SetString (ErrorObject, "error while locating key span");
 	  return NULL;
 	}
       }
     } else {
       return Py_BuildValue ("(ii)", 0, 0);
+    }
+  }
+}
+
+static char avl_tree_at_least__doc__[] =
+"Return the first object comparing greater to or equal to the <key> argument";
+
+static PyObject *
+avl_tree_at_least (avl_treeobject * self, PyObject * args)
+{
+  PyObject * key_val;
+  PyObject * return_value;
+  int result;
+
+  if (!PyArg_ParseTuple (args, "O", &key_val)) {
+    return NULL;
+  } else {
+    Py_INCREF (key_val);
+    if (self->tree->length) {
+      result = get_item_by_key_least (self->tree,
+				      (void *) key_val,
+				      (void **) &return_value);
+      if (result == 0) {
+	/* success */
+	Py_INCREF (return_value);
+	Py_DECREF (key_val);
+	return (return_value);
+      } else {
+	Py_DECREF (key_val);
+	PyErr_SetObject (PyExc_KeyError, key_val);
+	return NULL;
+      }
+    } else {
+      Py_DECREF (key_val);
+      PyErr_SetObject (PyExc_KeyError, key_val);
+      return NULL;
+    }
+  }
+}
+
+static char avl_tree_at_most__doc__[] =
+"Return the first object comparing less than or equal to the <key> argument";
+
+static PyObject *
+avl_tree_at_most (avl_treeobject * self, PyObject * args)
+{
+  PyObject * key_val;
+  PyObject * return_value;
+  int result;
+
+  if (!PyArg_ParseTuple (args, "O", &key_val)) {
+    return NULL;
+  } else {
+    Py_INCREF (key_val);
+    if (self->tree->length) {
+      result = get_item_by_key_most (self->tree,
+				     (void *) key_val,
+				     (void **) &return_value);
+      if (result == 0) {
+	/* success */
+	Py_INCREF (return_value);
+	Py_DECREF (key_val);
+	return (return_value);
+      } else {
+	Py_DECREF (key_val);
+	PyErr_SetObject (PyExc_KeyError, key_val);
+	return NULL;
+      }
+    } else {
+      Py_DECREF (key_val);
+      PyErr_SetObject (PyExc_KeyError, key_val);
+      return NULL;
     }
   }
 }
@@ -432,6 +502,8 @@ static struct PyMethodDef avl_tree_methods[] = {
   {"has_key",	(PyCFunction)avl_tree_has_key,	1,	avl_tree_has_key__doc__},
   {"slice_as_list",	(PyCFunction)avl_tree_slice_as_list,1,	avl_tree_slice_as_list__doc__},
   {"span",	(PyCFunction)avl_tree_span,	1,	avl_tree_span__doc__},
+  {"at_least",	(PyCFunction)avl_tree_at_least,	1,	avl_tree_at_least__doc__},
+  {"at_most",	(PyCFunction)avl_tree_at_most,	1,	avl_tree_at_most__doc__},
   {"slice_as_tree",	(PyCFunction)avl_tree_from_tree,1,	avl_tree_from_tree__doc__},
 #ifdef DEBUG_AVL
   {"verify",	(PyCFunction)avl_tree_verify,	1,	avl_tree_verify__doc__},
@@ -448,14 +520,10 @@ newavl_treeobject (PyObject * compare_function)
 {
   avl_treeobject *self;
 	
-  fprintf (stderr, "newavl_treeobject: compare_function=%p\n", compare_function);
-
   self = PyObject_NEW(avl_treeobject, &Avl_treetype);
   if (self == NULL) {
     return NULL;
   }
-
-  fprintf (stderr, "  self=%p\n", self);
 
   self->tree = new_avl_tree (avl_key_compare_for_python, (void *) self);
   if (!self->tree) {
@@ -940,21 +1008,21 @@ static char avl_module_documentation[] =
 void
 initavl(void)
 {
-	PyObject *m, *d;
+  PyObject *m, *d;
 
-	/* Create the module and add the functions */
-	m = Py_InitModule4("avl", avl_methods,
-		avl_module_documentation,
-		(PyObject*)NULL,PYTHON_API_VERSION);
+  /* Create the module and add the functions */
+  m = Py_InitModule4("avl", avl_methods,
+		     avl_module_documentation,
+		     (PyObject*)NULL,PYTHON_API_VERSION);
 
-	/* Add some symbolic constants to the module */
-	d = PyModule_GetDict(m);
-	ErrorObject = PyString_FromString("avl.error");
-	PyDict_SetItemString(d, "error", ErrorObject);
+  /* Add some symbolic constants to the module */
+  d = PyModule_GetDict(m);
+  ErrorObject = PyString_FromString("avl.error");
+  PyDict_SetItemString(d, "error", ErrorObject);
 
-	/* XXXX Add constants here */
+  /* XXXX Add constants here */
 	
-	/* Check for errors */
-	if (PyErr_Occurred())
-		Py_FatalError("can't initialize module avl");
+  /* Check for errors */
+  if (PyErr_Occurred())
+    Py_FatalError("can't initialize module avl");
 }

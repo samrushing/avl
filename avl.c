@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.c,v 2.0 1996/02/26 06:18:13 rushing Exp rushing $ */
+/* $Id: avl.c,v 2.1 1997/02/21 23:10:05 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -831,6 +831,87 @@ get_span_by_two_keys (avl_tree * tree,
   *low = i;
   *high = j;
   return 0;
+}
+
+		   
+int
+get_item_by_key_most (avl_tree * tree,
+		      void * key,
+		      void **value_address)
+{
+  avl_node * x = tree->root->right;
+  *value_address = NULL;
+
+  while (1) {
+    int compare_result = tree->compare_fun (tree->compare_arg, key, x->key);
+
+    if (compare_result == 0) {
+      *value_address = x->key;
+      return 0;
+    } else if (compare_result < 0) {
+      /* the given key is less than the current key */
+      if (x->left) {
+	x = x->left;
+      } else {
+	if (*value_address) 
+	  return 0;
+	else
+	  return -1;
+      }
+    } else {
+      /* the given key is more than the current key */
+      /* save this value, it might end up being the right one! */
+      *value_address = x->key;
+      if (x->right) {
+	/* there is a bigger entry */
+	x = x->right;
+      } else {
+	if (*value_address) 
+	  return 0;
+	else
+	  return -1;
+      }
+    }
+  }
+}
+
+int
+get_item_by_key_least (avl_tree * tree,
+		       void * key,
+		       void **value_address)
+{
+  avl_node * x = tree->root->right;
+  *value_address = NULL;
+
+  while (1) {
+    int compare_result = tree->compare_fun (tree->compare_arg, key, x->key);
+    if (compare_result == 0) {
+      *value_address = x->key;
+      return 0;  /* exact match */
+    } else if (compare_result < 0) {
+      /* the given key is less than the current key */
+      /* save this value, it might end up being the right one! */
+      *value_address = x->key;
+      if (x->left) {
+	x = x->left;
+      } else {
+	if (*value_address)  /* we have found a valid entry */
+	  return 0; 
+	else
+	  return -1;
+      }
+    } else {
+      if (x->right) {
+	/* there is a bigger entry */
+	x = x->right;
+      } else {
+	if (*value_address)  /* we have found a valid entry */
+	  return 0; 
+	else
+	  return -1;
+      }
+    }
+  }
 }
 
 #define MAX(X, Y)  ((X) > (Y) ? (X) : (Y))

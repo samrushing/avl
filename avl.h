@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.h,v 2.0 1996/02/26 06:18:13 rushing Exp rushing $ */
+/* $Id: avl.h,v 2.1 1997/02/21 23:09:58 rushing Exp rushing $ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -105,6 +105,15 @@ avl_node * get_predecessor (avl_node * node);
 
 avl_node * get_successor (avl_node * node);
 
+/* These two are from David Ascher <david_ascher@brown.edu> */
+
+int get_item_by_key_most (avl_tree * tree,
+			  void * key,
+			  void **value_address);
+
+int get_item_by_key_least (avl_tree * tree,
+			   void * key,
+			   void **value_address);
 
 #ifdef __cplusplus
 }
