@@ -2,7 +2,7 @@
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  */
 
-/* $Id: avl.h,v 2.1 1997/02/21 23:09:58 rushing Exp rushing $ */
+/* $Id: avl.h,v 2.2 1997/02/21 23:23:25 rushing Exp rushing $ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,49 +57,69 @@ typedef struct _avl_tree {
 avl_tree * new_avl_tree (avl_key_compare_fun_type compare_fun, void * compare_arg);
 avl_node * new_avl_node (void * key, avl_node * parent);
 
-void free_avl_tree (avl_tree * tree,
-		    avl_free_key_fun_type free_key_fun);
+void free_avl_tree (
+  avl_tree *		tree,
+  avl_free_key_fun_type	free_key_fun
+  );
 
-int insert_by_key (avl_tree * ob,
-		   void * key);
+int insert_by_key (
+  avl_tree *		ob,
+  void *		key
+  );
 
-int remove_by_key (avl_tree * tree,
-		   void * key,
-		   avl_free_key_fun_type free_key_fun);
+int remove_by_key (
+  avl_tree *		tree,
+  void *		key,
+  avl_free_key_fun_type	free_key_fun
+  );
 
-int get_item_by_index (avl_tree * tree,
-		       unsigned long index,
-		       void ** value_address);
+int get_item_by_index (
+  avl_tree *		tree,
+  unsigned long		index,
+  void **		value_address
+  );
 
-int get_item_by_key (avl_tree * tree,
-		     void * key,
-		     void **value_address);
+int get_item_by_key (
+  avl_tree *		tree,
+  void *		key,
+  void **		value_address
+  );
 
-int iterate_inorder (avl_tree * tree,
-		     avl_iter_fun_type iter_fun,
-		     void * iter_arg);
+int iterate_inorder (
+  avl_tree *		tree,
+  avl_iter_fun_type	iter_fun,
+  void *		iter_arg
+  );
 
-int iterate_index_range (avl_tree * tree,
-			 avl_iter_index_fun_type iter_fun,
-			 unsigned long low,
-			 unsigned long high,
-			 void * iter_arg);
+int iterate_index_range (
+  avl_tree *		tree,
+  avl_iter_index_fun_type iter_fun,
+  unsigned long		low,
+  unsigned long		high,
+  void *		iter_arg
+  );
 
-int get_span_by_key (avl_tree * tree,
-		     void * key,
-		     unsigned long * low,
-		     unsigned long * high);
+int get_span_by_key (
+  avl_tree *		tree,
+  void *		key,
+  unsigned long *	low,
+  unsigned long *	high
+  );
 
-int get_span_by_two_keys (avl_tree * tree,
-			  void * key_a,
-			  void * key_b,
-			  unsigned long * low,
-			  unsigned long * high);
+int get_span_by_two_keys (
+  avl_tree *		tree,
+  void *		key_a,
+  void *		key_b,
+  unsigned long *	low,
+  unsigned long *	high
+  );
 
 int verify (avl_tree * tree);
 
-void print_tree (avl_tree * tree,
-		 avl_key_printer_fun_type key_printer);
+void print_tree (
+  avl_tree *		tree,
+  avl_key_printer_fun_type key_printer
+  );
 
 avl_node * get_predecessor (avl_node * node);
 
@@ -107,13 +127,17 @@ avl_node * get_successor (avl_node * node);
 
 /* These two are from David Ascher <david_ascher@brown.edu> */
 
-int get_item_by_key_most (avl_tree * tree,
-			  void * key,
-			  void **value_address);
+int get_item_by_key_most (
+  avl_tree *		tree,
+  void *		key,
+  void **		value_address
+  );
 
-int get_item_by_key_least (avl_tree * tree,
-			   void * key,
-			   void **value_address);
+int get_item_by_key_least (
+  avl_tree *		tree,
+  void *		key,
+  void **		value_address
+  );
 
 #ifdef __cplusplus
 }
