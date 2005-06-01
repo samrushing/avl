@@ -1,5 +1,5 @@
 
-		     AVL Tree Objects for Python
+                     AVL Tree Objects for Python
 
 This package implements a dual-personality builtin object for Python,
 using AVL trees.  AVL trees (named after the inventors,
@@ -17,10 +17,10 @@ lists. (In fact, the printed representation is just like that of a
 list).
 
 Each of the following operations can be done in O(log n) time:
-i)	Find an item having a given key
-ii)	Find the kth item, given k
-iii)	Insert an item at a specified place
-iv)	Delete a specified item
+i)      Find an item having a given key
+ii)     Find the kth item, given k
+iii)    Insert an item at a specified place
+iv)     Delete a specified item
 
 Other operations are also possible in comparable time, including
 concatenation and splitting.
@@ -76,10 +76,10 @@ add something like this to Python/Modules/makefile_nt.msc
 AVL_LIB = \\squirl\rushing\python\avl
 
 AVLmodule.obj: AVLmodule.c $(AVL_LIB)\avl.h
-	$(cc) -DDEBUG_AVL -I$(AVL_LIB) $(cflags) $(ccustom) $(cdebug) $(cinclude) $(cpch) $(pythonopts) /DUSE_DL_IMPORT /Tp $*.c
+        $(cc) -DDEBUG_AVL -I$(AVL_LIB) $(cflags) $(ccustom) $(cdebug) $(cinclude) $(cpch) $(pythonopts) /DUSE_DL_IMPORT /Tp $*.c
 
 avl.$(pythondllext): $(AVL_LIB)\avl.c $(AVL_LIB)\avl.h AVLmodule.obj
-	link -dll -out:$*.$(pythondllext) AVLmodule.obj -implib:AVLmodule.lib -entry:_DllMainCRTStartup$(DLLENTRY) $(ldebug) /EXPORT:initavl $(lcustom) $(AVL_LIB)\avl.lib $(python_defs_lib)
+        link -dll -out:$*.$(pythondllext) AVLmodule.obj -implib:AVLmodule.lib -entry:_DllMainCRTStartup$(DLLENTRY) $(ldebug) /EXPORT:initavl $(lcustom) $(AVL_LIB)\avl.lib $(python_defs_lib)
 ---------------------------------------------------------------------------
 
 Usage:
