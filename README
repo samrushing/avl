@@ -55,33 +55,17 @@ a few methods (getslice, concat) directly in AVLmodule.c.
 ===========================================================================
 Building:
 
-Unix:
-First, cd $(AVL_LIB), then 'make libavl.a'
+Just the usual 
 
-Then copy AVLmodule.c into your Modules directory.
-add a few lines like this to your Python/Modules/Setup file.
----------------------------------------------------------------------------
-# avl module
-AVL_LIB=/usr/src/other-homes/rushing/python/avl
-avl AVLmodule.o -DDEBUG_AVL -I$(AVL_LIB) -L$(AVL_LIB) -lavl
----------------------------------------------------------------------------
+  python setup.py install
 
-Win32:
-First, cd $(AVL_LIB), then 'nmake -f makefile_nt.msc avl.lib'
+Uncomment the
 
-add something like this to Python/Modules/makefile_nt.msc
-(or a separate makefile like in Demo/dl.nt)
----------------------------------------------------------------------------
-# avl module
-AVL_LIB = \\squirl\rushing\python\avl
+  #ext_macros = ['DEBUG_AVL']
 
-AVLmodule.obj: AVLmodule.c $(AVL_LIB)\avl.h
-        $(cc) -DDEBUG_AVL -I$(AVL_LIB) $(cflags) $(ccustom) $(cdebug) $(cinclude) $(cpch) $(pythonopts) /DUSE_DL_IMPORT /Tp $*.c
+to get the debugging information. 
 
-avl.$(pythondllext): $(AVL_LIB)\avl.c $(AVL_LIB)\avl.h AVLmodule.obj
-        link -dll -out:$*.$(pythondllext) AVLmodule.obj -implib:AVLmodule.lib -entry:_DllMainCRTStartup$(DLLENTRY) $(ldebug) /EXPORT:initavl $(lcustom) $(AVL_LIB)\avl.lib $(python_defs_lib)
----------------------------------------------------------------------------
-
+===========================================================================
 Usage:
 
 >>> t = avl.newavl()
