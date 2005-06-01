@@ -1,6 +1,7 @@
 /* -*- Mode: C; indent-tabs-mode: nil -*- */
 /*
  * Copyright (C) 1995-1997 by Sam Rushing <rushing@nightmare.com>
+ * Copyright (C) 2005 by Germanischer Lloyd AG
  *
  *                         All Rights Reserved
  *
@@ -23,7 +24,7 @@
  *
  */
 
-/* $Id: avl.c,v 2.10 2005/06/01 22:34:12 rushing Exp rushing $ */
+/* $Id: avl.c,v 2.11 2005/06/01 23:06:46 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -691,7 +692,7 @@ avl_get_successor (avl_node * node)
   }
 }
 
-/* iterate a function over a range of indices, using get_predecessor */
+/* iterate a function over a range of indices, using avl_get_predecessor */
 
 int
 avl_iterate_index_range (avl_tree * tree,
@@ -969,11 +970,11 @@ avl_verify_balance (avl_node * node)
     long lh = avl_verify_balance (node->left);
     long rh = avl_verify_balance (node->right);
     if ((rh - lh) != AVL_GET_BALANCE(node)) {
-      fprintf (stderr, "invalid balance at node %d\n", (int) node->key);
+      fprintf (stderr, "invalid balance at node %p\n", node->key);
       exit(1);
     }
     if (((lh - rh) > 1) || ((lh - rh) < -1)) {
-      fprintf (stderr, "unbalanced at node %d\n", (int) node->key);
+      fprintf (stderr, "unbalanced at node %p\n", node->key);
       exit(1);
     }
     return (1 + MAX (lh, rh));
@@ -984,7 +985,7 @@ void
 avl_verify_parent (avl_node * node, avl_node * parent)
 {
   if (node->parent != parent) {
-    fprintf (stderr, "invalid parent at node %d\n", (int) node->key);
+    fprintf (stderr, "invalid parent at node %p\n", node->key);
     exit(1);
   }
   if (node->left) {
@@ -1009,7 +1010,7 @@ avl_verify_rank (avl_node * node)
       num_right = avl_verify_rank (node->right);
     }
     if (AVL_GET_RANK (node) != num_left + 1) {
-      fprintf (stderr, "invalid rank at node %d\n", (int) node->key);
+      fprintf (stderr, "invalid rank at node %p\n", node->key);
       exit (1);
     }
     return (num_left + num_right + 1);
@@ -1030,7 +1031,7 @@ avl_verify (avl_tree * tree)
 }
 
 /*
- * These structures are accumulated on the stack during print_tree
+ * These structures are accumulated on the stack during avl_print_tree
  * and are used to keep track of the width and direction of each
  * branch in the history of a particular line <node>.
  */
@@ -1040,8 +1041,6 @@ typedef struct _avl_link_node {
   char                  direction;
   int                   width;
 } avl_link_node;
-
-char balance_chars[3] = {'\\', '-', '/'};
 
 int
 avl_default_key_printer (char * buffer, void * key)
@@ -1088,12 +1087,16 @@ avl_print_node (avl_key_printer_fun_type key_printer,
                 avl_node * node,
                 avl_link_node * link)
 {
+  static char balance_chars[3] = {'\\', '-', '/'};
   char buffer[256];
   unsigned int width;
   width = key_printer (buffer, node->key);
 
   if (node->right) {
-    avl_link_node here = {link, 1, width+11};
+    avl_link_node here;
+    here.parent = link;
+    here.direction = 1;
+    here.width = width+11;
     avl_print_node (key_printer, node->right, &here);
   }
   avl_print_connectors (link);
@@ -1107,7 +1110,10 @@ avl_print_node (avl_key_printer_fun_type key_printer,
     fprintf (stdout, "\n");
   }
   if (node->left) {
-    avl_link_node here = {link, -1, width+11};
+    avl_link_node here;
+    here.parent = link;
+    here.direction = -1;
+    here.width = width+11;
     avl_print_node (key_printer, node->left, &here);
   }
 }
