@@ -3,7 +3,7 @@
  * Copyright (C) 2005 by Germanischer Lloyd AG
  */
 
-/* $Id: avl.h,v 2.4 2005/06/01 22:30:12 rushing Exp rushing $ */
+/* $Id: avl.h,v 2.5 2005/06/01 22:33:16 rushing Exp rushing $ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,7 +32,7 @@ typedef struct avl_node_tag {
 
 #define AVL_SET_RANK(n,r) \
   ((n)->rank_and_balance) = \
-    (((n)->rank_and_balance & 3) | (r << 2))
+    (((n)->rank_and_balance & 3) | ((r) << 2))
 
 struct _avl_tree;
 
