@@ -35,32 +35,36 @@ main (int argc, char ** argv)
 {
   avl_tree * tree;
 
-  tree = new_avl_tree (compare_longs, NULL);
+  tree = avl_new_avl_tree (compare_longs, NULL);
 
-  insert_by_key (tree, (void *) 50); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 45); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 15); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 10); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 75); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 55); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 70); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 80); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 60); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 32); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 20); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 40); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 25); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 22); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 31); print_tree (tree, long_printer); verify (tree);
-  insert_by_key (tree, (void *) 30); print_tree (tree, long_printer); verify (tree);
+  avl_insert_by_key (tree, (void *) 50); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 45); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 15); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 10); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 75); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 55); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 70); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 80); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 60); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 32); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 20); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 40); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 25); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 22); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 31); avl_print_tree (tree, long_printer); avl_verify (tree);
+  avl_insert_by_key (tree, (void *) 30); avl_print_tree (tree, long_printer); avl_verify (tree);
   while (tree->length) {
     int num = 0;
-
-    fscanf (stdin, "%d", &num);
-    fprintf (stdout, "deleting %d\n", num);
-    remove_by_key (tree, (void *) num, null_key_free);
-    print_tree (tree, long_printer);
-    verify (tree);
+    int any = 0;
+    any = fscanf (stdin, "%d", &num);
+    if (any < 1) {
+      return 0;
+    } else {
+      fprintf (stdout, "deleting %d\n", num);
+      avl_remove_by_key (tree, (void *) num, null_key_free);
+      avl_print_tree (tree, long_printer);
+      avl_verify (tree);
+    }
   }
   return 0;
 }
