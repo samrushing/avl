@@ -25,7 +25,7 @@
  *
  */
 
-/* $Id: AVLmodule.c,v 2.7 2005/06/02 00:22:33 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 2.8 2005/06/02 00:46:20 rushing Exp rushing $ */
 
 #include <Python.h>
 #include "avl.h"
@@ -102,10 +102,10 @@ avl_key_compare_for_python (void * compare_arg, void * a, void * b)
   }
 }
 
-
-static char avl_tree_insert__doc__[] =
-"Insert an item into the tree"
-;
+PyDoc_STRVAR (
+  avl_tree_insert__doc__,
+  "Insert an item into the tree"
+  );
 
 static PyObject *
 avl_tree_insert(avl_treeobject * self, PyObject * args)
@@ -128,9 +128,10 @@ avl_tree_insert(avl_treeobject * self, PyObject * args)
   }
 }
 
-static char avl_tree_remove__doc__[] =
-"Remove an item from the tree"
-;
+PyDoc_STRVAR (
+  avl_tree_remove__doc__,
+  "Remove an item from the tree"
+  );
 
 /* remove_by_key's free_key_fun callback */
 
@@ -161,8 +162,10 @@ avl_tree_remove (avl_treeobject *self, PyObject *args)
   }
 }
 
-static char avl_tree_lookup__doc__[] =
-"Return the first object comparing equal to the <key> argument";
+PyDoc_STRVAR (
+  avl_tree_lookup__doc__,
+  "Return the first object comparing equal to the <key> argument";
+  )
 
 static PyObject *
 avl_tree_lookup (avl_treeobject * self, PyObject * args)
@@ -191,9 +194,11 @@ avl_tree_lookup (avl_treeobject * self, PyObject * args)
   }
 }
 
-static char avl_tree_span__doc__[] =
-"t.span (key) => (low, high)\n"
-"Returns a pair of indices (low, high) that span the range of <key>";
+PyDoc_STRVAR (
+  avl_tree_span__doc__,
+  "t.span (key) => (low, high)\n"
+  "Returns a pair of indices (low, high) that span the range of <key>"
+  );
 
 static PyObject *
 avl_tree_span (avl_treeobject * self, PyObject * args)
@@ -240,8 +245,10 @@ avl_tree_span (avl_treeobject * self, PyObject * args)
   }
 }
 
-static char avl_tree_at_least__doc__[] =
-"Return the first object comparing greater to or equal to the <key> argument";
+PyDoc_STRVAR (
+  avl_tree_at_least__doc__,
+  "Return the first object comparing greater to or equal to the <key> argument"
+  );
 
 static PyObject *
 avl_tree_at_least (avl_treeobject * self, PyObject * args)
@@ -272,8 +279,11 @@ avl_tree_at_least (avl_treeobject * self, PyObject * args)
   }
 }
 
-static char avl_tree_at_most__doc__[] =
-"Return the first object comparing less than or equal to the <key> argument";
+PyDoc_STRVAR (
+  avl_tree_at_most__doc__,
+  "Return the first object comparing less than or equal to the <key> argument"
+  );
+  
 
 static PyObject *
 avl_tree_at_most (avl_treeobject * self, PyObject * args)
@@ -304,8 +314,10 @@ avl_tree_at_most (avl_treeobject * self, PyObject * args)
   }
 }
 
-static char avl_tree_has_key__doc__[] =
-"Does the tree contain an item comparing equal to <key>?";
+PyDoc_STRVAR (
+  avl_tree_has_key__doc__,
+  "Does the tree contain an item comparing equal to <key>?"
+  );
 
 static PyObject *
 avl_tree_has_key (avl_treeobject * self, PyObject * args)
@@ -334,8 +346,10 @@ avl_tree_has_key (avl_treeobject * self, PyObject * args)
 }
 
 #ifdef DEBUG_AVL
-static char avl_tree_verify__doc__[] =
-"Verify the internal structure of the AVL tree (testing only)";
+PyDoc_STRVAR (
+  avl_tree_verify__doc__,
+  "Verify the internal structure of the AVL tree (testing only)"
+  );
 
 static PyObject *
 avl_tree_verify (avl_treeobject * self, PyObject * args)
@@ -343,8 +357,10 @@ avl_tree_verify (avl_treeobject * self, PyObject * args)
   return (Py_BuildValue ("i", verify (self->tree)));
 }
 
-static char avl_tree_print_internal_structure__doc__[] =
-"Print the internal structure of the AVL tree (testing only)";
+PyDoc_STRVAR (
+  avl_tree_print_internal_structure__doc__,
+  "Print the internal structure of the AVL tree (testing only)"
+  );
 
 static
 int
@@ -823,9 +839,10 @@ static PySequenceMethods avl_tree_as_sequence = {
 
 /* -------------------------------------------------------------- */
 
-static char Avl_treetype__doc__[] =
-"A dual-personality object, can act like a sequence and a dictionary.  Implemented with an AVL tree"
-;
+PyDoc_STRVAR (
+  Avl_treetype__doc__,
+  "A dual-personality object, can act like a sequence and a dictionary.  Implemented with an AVL tree"
+  );
 
 static PyTypeObject Avl_treetype = {
         PyObject_HEAD_INIT(&PyType_Type)
@@ -1008,14 +1025,15 @@ avl_new_avl_from_list (PyObject * self, /* not used */
   return (PyObject *) tree;
 }
 
-static char avl_newavl__doc__[] =
-"With no arguments, returns a new and empty tree.\n"
-"Given a list, it will return a new tree containing the elements\n"
-"  of the list, and will sort the list as a side-effect\n"
-"Given a tree, will return a copy of the original tree\n"
-"An optional second argument is a key-comparison function\n"
-;
-
+PyDoc_STRVAR (
+  avl_newavl__doc__,
+  "With no arguments, returns a new and empty tree.\n"
+  "Given a list, it will return a new tree containing the elements\n"
+  "  of the list, and will sort the list as a side-effect\n"
+  "Given a tree, will return a copy of the original tree\n"
+  "An optional second argument is a key-comparison function\n"
+  );
+  
 static
 PyObject *
 avl_newavl(PyObject * self,     /* Not used */
@@ -1048,9 +1066,10 @@ static struct PyMethodDef avl_methods[] = {
 
 /* Initialization function for the module (*must* be called initavl) */
 
-static char avl_module_documentation[] =
-"Implements a dual-personality object (that can act like a sequence _and_ a dictionary) with AVL trees."
-;
+PyDoc_STRVAR (
+  avl_module_documentation,
+  "Implements a dual-personality object (that can act like a sequence _and_ a dictionary) with AVL trees."
+  );
 
 void
 initavl(void)
@@ -1058,9 +1077,13 @@ initavl(void)
   PyObject *m, *d;
 
   /* Create the module and add the functions */
-  m = Py_InitModule4("avl", avl_methods,
-                     avl_module_documentation,
-                     (PyObject*)NULL,PYTHON_API_VERSION);
+  m = Py_InitModule4 (
+    "avl",
+    avl_methods,
+    avl_module_documentation,
+    (PyObject*)NULL,
+    PYTHON_API_VERSION
+    );
 
   /* Add some symbolic constants to the module */
   d = PyModule_GetDict(m);
