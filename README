@@ -246,3 +246,28 @@ David Ascher <david_ascher@brown.edu> (at_least() and at_most()).
 # at_most() returns the first object comparing less than or equal to the <key> argument.
 >>> t.at_most (800)
 754
+
+# ===========================================================================
+# release 2.1.0 (Jun 2005)
+# ===========================================================================
+
+Berthold Höllmann finally spurs me into doing the long-awaited merge.
+
+# ===========================================================================
+# release 2.1.1 (Jun 2005)
+# ===========================================================================
+
+Lots of fixes/changes merged from various sources.
+
+Only one change in functionality:
+  insert_by_key() now returns the index of insertion.
+
+Thanks To:
+  Berthold Höllmann (modernization, 64-bit fixes, setup.py)
+  Charlie Kemp (another setup.py)
+  Paul Cameron (subtle bug when removing non-existent key )
+
+And From IronPort:
+  Martin Baker (made slicing match Python's, other changes)
+  Eric Huss (refcount touch-ups, lots of other work)
+  Sam Rushing
