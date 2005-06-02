@@ -25,7 +25,7 @@
  *
  */
 
-/* $Id: AVLmodule.c,v 2.5 2005/06/01 23:07:59 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 2.6 2005/06/02 00:10:29 rushing Exp rushing $ */
 
 #include <Python.h>
 #include "avl.h"
@@ -115,15 +115,15 @@ avl_tree_insert(avl_treeobject * self, PyObject * args)
   if (!PyArg_ParseTuple(args, "O", &val)) {
     return NULL;
   } else {
+    unsigned int index = 0;
     Py_INCREF (val);
-    if (avl_insert_by_key (self->tree, (void *) val) != 0) {
+    if (avl_insert_by_key (self->tree, (void *) val, &index) != 0) {
       Py_DECREF (val);
       PyErr_SetString (ErrorObject, "error while inserting item");
       return NULL;
     } else {
       self->node_cache = NULL;
-      Py_INCREF(Py_None);
-      return Py_None;
+      return PyInt_FromLong (index);
     }
   }
 }
@@ -704,8 +704,9 @@ avl_tree_concat (avl_treeobject *self, avl_treeobject *bb)
      * them into self_copy
      */
     while (bb_node_counter--) {
+      unsigned int ignore;
       Py_INCREF ((PyObject *)bb_node->key);
-      if (avl_insert_by_key (self_copy->tree, (void *) bb_node->key) != 0) {
+      if (avl_insert_by_key (self_copy->tree, (void *) bb_node->key, &ignore) != 0) {
         avl_tree_dealloc (self_copy);
         return NULL;
       }

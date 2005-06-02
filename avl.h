@@ -3,7 +3,7 @@
  * Copyright (C) 2005 by Germanischer Lloyd AG
  */
 
-/* $Id: avl.h,v 2.5 2005/06/01 22:33:16 rushing Exp rushing $ */
+/* $Id: avl.h,v 2.6 2005/06/01 23:34:55 rushing Exp rushing $ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,7 +65,8 @@ void avl_free_avl_tree (
 
 int avl_insert_by_key (
   avl_tree *            ob,
-  void *                key
+  void *                key,
+  unsigned int *        index
   );
 
 int avl_remove_by_key (
