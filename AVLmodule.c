@@ -26,7 +26,7 @@
  *
  */
 
-/* $Id: AVLmodule.c,v 2.9 2005/06/02 00:52:10 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 2.10 2005/06/02 00:54:34 rushing Exp rushing $ */
 
 #include <Python.h>
 #include "avl.h"
@@ -205,7 +205,7 @@ static PyObject *
 avl_tree_span (avl_treeobject * self, PyObject * args)
 {
   PyObject * low_key, * high_key = NULL;
-  unsigned long low, high;
+  unsigned int low, high;
   int result;
 
   if (!PyArg_ParseTuple (args, "O|O", &low_key, &high_key)) {
@@ -479,7 +479,7 @@ avl_tree_from_tree (avl_treeobject * self,
 
 static
 int
-slice_callback (unsigned long index, void * key, void * arg)
+slice_callback (unsigned int index, void * key, void * arg)
 {
   /* arg is a list template */
   Py_INCREF ((PyObject *) key);
@@ -512,7 +512,7 @@ avl_tree_slice_as_list (avl_treeobject * self, PyObject * args)
 
   if (ilow < 0) ilow = 0;
   if (ihigh < 0) ihigh = 0;
-  if ((unsigned long)ihigh > self->tree->length) {
+  if ((unsigned int)ihigh > self->tree->length) {
     ihigh = (int)self->tree->length;
   }
   if (ilow > ihigh) {
@@ -525,8 +525,8 @@ avl_tree_slice_as_list (avl_treeobject * self, PyObject * args)
   if (ihigh - ilow) {
     result = avl_iterate_index_range (self->tree,
                                       slice_callback,
-                                      (unsigned long) ilow,
-                                      (unsigned long) ihigh,
+                                      (unsigned int) ilow,
+                                      (unsigned int) ihigh,
                                       (void *) list);
     if (result != 0) {
       PyErr_SetString (ErrorObject, "error while accessing slice");
@@ -588,7 +588,7 @@ avl_tree_dealloc(avl_treeobject *self)
 static
 int
 avl_tree_print_helper (avl_node * node,
-                       long * index,
+                       int * index,
                        FILE * fp)
 {
   if (node->left) {
@@ -619,7 +619,7 @@ avl_tree_print(avl_treeobject *self, FILE *fp, int flags)
   if (!self->tree->length) {
     fprintf (fp, "[]");
   } else {
-    long index = 0;
+    int index = 0;
 
     fprintf (fp, "[");
     if ((avl_tree_print_helper (self->tree->root->right, & index, fp)) != 0) {
@@ -654,7 +654,7 @@ avl_tree_repr (avl_treeobject *self)
   PyObject * s;
   PyObject * comma;
   avl_node * node;
-  unsigned long i;
+  unsigned int i;
 
   if (self->tree->length) {
     s = PyString_FromString ("[");
@@ -695,7 +695,7 @@ PyObject *
 avl_tree_concat (avl_treeobject *self, avl_treeobject *bb)
 {
   avl_treeobject * self_copy;
-  unsigned long bb_node_counter = bb->tree->length;
+  unsigned int bb_node_counter = bb->tree->length;
 
   self_copy = avl_copy_avl_tree ((avl_treeobject *) self);
   if (!self_copy) {
@@ -741,7 +741,7 @@ PyObject *
 avl_tree_item (avl_treeobject *self, int i)
 {
   void * value;
-  unsigned long index = (unsigned long) i;
+  unsigned int index = (unsigned int) i;
   
   /* Python takes care of negative indices for us, so if
    * i is negative, that is an error. */
@@ -774,7 +774,7 @@ PyObject *
 avl_tree_slice (avl_treeobject *self, int ilow, int ihigh)
 {
   avl_treeobject * new_tree;
-  unsigned long m;
+  unsigned int m;
   avl_node * node;
 
   /* We are attempting to match Python slicing on list objects,
@@ -788,7 +788,7 @@ avl_tree_slice (avl_treeobject *self, int ilow, int ihigh)
    */
   if (ilow < 0) ilow = 0;
   if (ihigh < 0) ihigh = 0;
-  if ((unsigned long)ihigh > self->tree->length) {
+  if ((unsigned int)ihigh > self->tree->length) {
     ihigh = (int)self->tree->length;
   }
 
@@ -804,7 +804,7 @@ avl_tree_slice (avl_treeobject *self, int ilow, int ihigh)
 
   /* locate node <ilow> */
   node = self->tree->root->right;
-  m = (unsigned long) ilow + 1;
+  m = (unsigned int) ilow + 1;
   while (1) {
     if (m < AVL_GET_RANK(node)) {
       node = node->left;

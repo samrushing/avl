@@ -4,7 +4,7 @@
  * Copyright (C) 2001-2005 by IronPort Systems, Inc.
  */
 
-/* $Id: avl.h,v 2.8 2005/06/02 00:53:01 rushing Exp rushing $ */
+/* $Id: avl.h,v 2.9 2005/06/02 00:59:03 rushing Exp rushing $ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,7 +20,7 @@ typedef struct avl_node_tag {
    * factor: 00==-1, 01==0, 10==+1.
    * The rest of the bits are used for <rank>
    */
-  unsigned long         rank_and_balance;
+  unsigned int          rank_and_balance;
 } avl_node;
 
 #define AVL_GET_BALANCE(n)      ((int)(((n)->rank_and_balance & 3) - 1))
@@ -39,7 +39,7 @@ struct _avl_tree;
 
 typedef int (*avl_key_compare_fun_type) (void * compare_arg, void * a, void * b);
 typedef int (*avl_iter_fun_type)        (void * key, void * iter_arg);
-typedef int (*avl_iter_index_fun_type)  (unsigned long index, void * key, void * iter_arg);
+typedef int (*avl_iter_index_fun_type)  (unsigned int index, void * key, void * iter_arg);
 typedef int (*avl_free_key_fun_type)    (void * key);
 typedef int (*avl_key_printer_fun_type) (char *, void *);
 
@@ -50,7 +50,7 @@ typedef int (*avl_key_printer_fun_type) (char *, void *);
 
 typedef struct _avl_tree {
   avl_node *                    root;
-  unsigned long                 length;
+  unsigned int                  length;
   avl_key_compare_fun_type      compare_fun;
   void *                        compare_arg;
 } avl_tree;
@@ -77,7 +77,7 @@ int avl_remove_by_key (
 
 int avl_get_item_by_index (
   avl_tree *            tree,
-  unsigned long         index,
+  unsigned int          index,
   void **               value_address
   );
 
@@ -96,24 +96,24 @@ int avl_iterate_inorder (
 int avl_iterate_index_range (
   avl_tree *            tree,
   avl_iter_index_fun_type iter_fun,
-  unsigned long         low,
-  unsigned long         high,
+  unsigned int          low,
+  unsigned int          high,
   void *                iter_arg
   );
 
 int avl_get_span_by_key (
   avl_tree *            tree,
   void *                key,
-  unsigned long *       low,
-  unsigned long *       high
+  unsigned int *        low,
+  unsigned int *        high
   );
 
 int avl_get_span_by_two_keys (
   avl_tree *            tree,
   void *                key_a,
   void *                key_b,
-  unsigned long *       low,
-  unsigned long *       high
+  unsigned int *        low,
+  unsigned int *        high
   );
 
 int avl_verify (avl_tree * tree);

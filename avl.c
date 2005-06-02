@@ -25,7 +25,7 @@
  *
  */
 
-/* $Id: avl.c,v 2.13 2005/06/02 00:54:09 rushing Exp rushing $ */
+/* $Id: avl.c,v 2.14 2005/06/02 00:59:09 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -285,11 +285,11 @@ avl_insert_by_key (avl_tree * ob,
 
 int
 avl_get_item_by_index (avl_tree * tree,
-                       unsigned long index,
+                       unsigned int index,
                        void ** value_address)
 {
   avl_node * p = tree->root->right;
-  unsigned long m = index + 1;
+  unsigned int m = index + 1;
   while (1) {
     if (!p) {
       return -1;
@@ -700,12 +700,12 @@ avl_get_successor (avl_node * node)
 int
 avl_iterate_index_range (avl_tree * tree,
                          avl_iter_index_fun_type iter_fun,
-                         unsigned long low,
-                         unsigned long high,
+                         unsigned int low,
+                         unsigned int high,
                          void * iter_arg)
 {
-  unsigned long m;
-  unsigned long num_left;
+  unsigned int m;
+  unsigned int num_left;
   avl_node * node;
 
   if (high > tree->length) {
@@ -744,10 +744,10 @@ avl_iterate_index_range (avl_tree * tree,
 avl_node *
 avl_get_index_by_key (avl_tree * tree,
                       void * key,
-                      unsigned long * index)
+                      unsigned int * index)
 {
   avl_node * x = tree->root->right;
-  unsigned long m;
+  unsigned int m;
 
   if (!x) {
     return NULL;
@@ -785,10 +785,10 @@ avl_get_index_by_key (avl_tree * tree,
 int
 avl_get_span_by_key (avl_tree * tree,
                      void * key,
-                     unsigned long * low,
-                     unsigned long * high)
+                     unsigned int * low,
+                     unsigned int * high)
 {
-  unsigned long m, i, j;
+  unsigned int m, i, j;
   avl_node * node;
 
   node = avl_get_index_by_key (tree, key, &m);
@@ -829,10 +829,10 @@ int
 avl_get_span_by_two_keys (avl_tree * tree,
                           void * low_key,
                           void * high_key,
-                          unsigned long * low,
-                          unsigned long * high)
+                          unsigned int * low,
+                          unsigned int * high)
 {
-  unsigned long i, j;
+  unsigned int i, j;
   avl_node * low_node, * high_node;
   int order;
 
@@ -964,14 +964,14 @@ avl_get_item_by_key_least (avl_tree * tree,
 
 #define MAX(X, Y)  ((X) > (Y) ? (X) : (Y))
 
-long
+int
 avl_verify_balance (avl_node * node)
 {
   if (!node) {
     return 0;
   } else {
-    long lh = avl_verify_balance (node->left);
-    long rh = avl_verify_balance (node->right);
+    int lh = avl_verify_balance (node->left);
+    int rh = avl_verify_balance (node->right);
     if ((rh - lh) != AVL_GET_BALANCE(node)) {
       fprintf (stderr, "invalid balance at node %p\n", node->key);
       exit(1);
@@ -999,13 +999,13 @@ avl_verify_parent (avl_node * node, avl_node * parent)
   }
 }
 
-long
+int
 avl_verify_rank (avl_node * node)
 {
   if (!node) {
     return 0;
   } else {
-    unsigned long num_left=0, num_right=0;
+    unsigned int num_left=0, num_right=0;
     if (node->left) {
       num_left = avl_verify_rank (node->left);
     }
