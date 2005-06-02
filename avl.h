@@ -1,9 +1,10 @@
 /*
  * Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
  * Copyright (C) 2005 by Germanischer Lloyd AG
+ * Copyright (C) 2001-2005 by IronPort Systems, Inc.
  */
 
-/* $Id: avl.h,v 2.6 2005/06/01 23:34:55 rushing Exp rushing $ */
+/* $Id: avl.h,v 2.7 2005/06/02 00:20:45 rushing Exp rushing $ */
 
 #ifdef __cplusplus
 extern "C" {

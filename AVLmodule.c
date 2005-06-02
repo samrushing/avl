@@ -3,6 +3,7 @@
 /*
  * Copyright (C) 1995-1997 by Sam Rushing <rushing@nightmare.com>
  * Copyright (C) 2005 by Germanischer Lloyd AG
+ * Copyright (C) 2001-2005 by IronPort Systems, Inc.
  *
  *                         All Rights Reserved
  *
@@ -25,7 +26,7 @@
  *
  */
 
-/* $Id: AVLmodule.c,v 2.8 2005/06/02 00:46:20 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 2.9 2005/06/02 00:52:10 rushing Exp rushing $ */
 
 #include <Python.h>
 #include "avl.h"
