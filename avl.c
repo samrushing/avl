@@ -25,7 +25,7 @@
  *
  */
 
-/* $Id: avl.c,v 2.12 2005/06/01 23:49:23 rushing Exp rushing $ */
+/* $Id: avl.c,v 2.13 2005/06/02 00:54:09 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -70,7 +70,6 @@ avl_new_avl_tree (avl_key_compare_fun_type compare_fun,
       return NULL;
     } else {
       t->root = root;
-      t->height = 0;
       t->length = 0;
       t->compare_fun = compare_fun;
       t->compare_arg = compare_arg;
@@ -198,7 +197,6 @@ avl_insert_by_key (avl_tree * ob,
 
     if (AVL_GET_BALANCE (s) == 0) {
       AVL_SET_BALANCE (s, a);
-      ob->height = ob->height + 1;
       return 0;
     } else if (AVL_GET_BALANCE (s) == -a) {
       AVL_SET_BALANCE (s, 0);

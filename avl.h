@@ -4,7 +4,7 @@
  * Copyright (C) 2001-2005 by IronPort Systems, Inc.
  */
 
-/* $Id: avl.h,v 2.7 2005/06/02 00:20:45 rushing Exp rushing $ */
+/* $Id: avl.h,v 2.8 2005/06/02 00:53:01 rushing Exp rushing $ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,7 +50,6 @@ typedef int (*avl_key_printer_fun_type) (char *, void *);
 
 typedef struct _avl_tree {
   avl_node *                    root;
-  unsigned long                 height;
   unsigned long                 length;
   avl_key_compare_fun_type      compare_fun;
   void *                        compare_arg;
