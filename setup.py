@@ -23,7 +23,7 @@ setup (name         = "avl",
        maintainer   = "Berthold Höllmann",
        maintainer_email = "hoel@gl-group.com",
        license      = "BSD",
-       url          = 'http://nightmare.com/squirl/python-ext/avl/',
+       url          = 'http://www.nightmare.com/squirl/python-ext/avl/',
        libraries    = [("avl", {"sources": ["avl.c"]})],
        ext_modules  = [Extension('avl', src,
                                  define_macros=ext_macros)])
@@ -31,6 +31,9 @@ setup (name         = "avl",
 ## ======================================================================
 ##   Update Informations
 ##  $Log: setup.py,v $
+##  Revision 1.1  2005/06/02 01:16:40  rushing
+##  Initial revision
+##
 ##  Revision 1.5  2005/05/31 07:53:26  hoel
 ##  prepared release 2.1.0
 ##
