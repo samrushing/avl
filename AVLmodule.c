@@ -25,7 +25,7 @@
  *
  */
 
-/* $Id: AVLmodule.c,v 2.6 2005/06/02 00:10:29 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 2.7 2005/06/02 00:22:33 rushing Exp rushing $ */
 
 #include <Python.h>
 #include "avl.h"
@@ -150,14 +150,11 @@ avl_tree_remove (avl_treeobject *self, PyObject *args)
   if (!PyArg_ParseTuple(args, "O", &val)) {
     return NULL;
   } else {
-    Py_INCREF(val);
     if (avl_remove_by_key (self->tree, (void *) val, avl_tree_key_free_fun) != 0) {
-      Py_DECREF(val);
       PyErr_SetString (ErrorObject, "error while removing item");
       return NULL;
     } else {
       self->node_cache = NULL;
-      Py_DECREF (val);
       Py_INCREF(Py_None);
       return Py_None;
     }
@@ -177,21 +174,17 @@ avl_tree_lookup (avl_treeobject * self, PyObject * args)
   if (!PyArg_ParseTuple (args, "O", &key_val)) {
     return NULL;
   } else {
-    Py_INCREF (key_val);
     if (self->tree->length) {
       result = avl_get_item_by_key (self->tree, (void *) key_val, (void **) &return_value);
       if (result == 0) {
-        /* success */
-        Py_INCREF (return_value);
-        Py_DECREF (key_val);
-        return (return_value);
+	/* success */
+	Py_INCREF (return_value);
+	return (return_value);
       } else {
-        Py_DECREF (key_val);
-        PyErr_SetObject (PyExc_KeyError, key_val);
-        return NULL;
+	PyErr_SetObject (PyExc_KeyError, key_val);
+	return NULL;
       }
     } else {
-      Py_DECREF (key_val);
       PyErr_SetObject (PyExc_KeyError, key_val);
       return NULL;
     }
@@ -215,37 +208,31 @@ avl_tree_span (avl_treeobject * self, PyObject * args)
     if (self->tree->length) {
       /* only one key was specified */
       if (!high_key) {
-        Py_INCREF (low_key);
-        result = avl_get_span_by_key (self->tree,
+	result = avl_get_span_by_key (self->tree,
                                       (void *) low_key,
                                       &low,
                                       &high);
-        Py_DECREF (low_key);
-        if (result == 0) {
-          /* success */
-          return Py_BuildValue ("(ii)", (int) low, (int) high);
-        } else {
-          PyErr_SetString (ErrorObject, "error while locating key span");
-          return NULL;
-        }
+	if (result == 0) {
+	  /* success */
+	  return Py_BuildValue ("(ii)", (int) low, (int) high);
+	} else {
+	  PyErr_SetString (ErrorObject, "error while locating key span");
+	  return NULL;
+	}
       } else {
-        /* they specified two keys */
-        Py_INCREF (low_key);
-        Py_INCREF (high_key);
-        result = avl_get_span_by_two_keys (self->tree,
+	/* they specified two keys */
+	result = avl_get_span_by_two_keys (self->tree,
                                            (void *) low_key,
                                            (void *) high_key,
                                            &low,
                                            &high);
-        Py_DECREF (low_key);
-        Py_DECREF (high_key);
-        if (result == 0) {
-          /* success */
-          return Py_BuildValue ("(ii)", (int) low, (int) high);
-        } else {
-          PyErr_SetString (ErrorObject, "error while locating key span");
-          return NULL;
-        }
+	if (result == 0) {
+	  /* success */
+	  return Py_BuildValue ("(ii)", (int) low, (int) high);
+	} else {
+	  PyErr_SetString (ErrorObject, "error while locating key span");
+	  return NULL;
+	}
       }
     } else {
       return Py_BuildValue ("(ii)", 0, 0);
@@ -266,23 +253,19 @@ avl_tree_at_least (avl_treeobject * self, PyObject * args)
   if (!PyArg_ParseTuple (args, "O", &key_val)) {
     return NULL;
   } else {
-    Py_INCREF (key_val);
     if (self->tree->length) {
       result = avl_get_item_by_key_least (self->tree,
                                           (void *) key_val,
                                           (void **) &return_value);
       if (result == 0) {
-        /* success */
-        Py_INCREF (return_value);
-        Py_DECREF (key_val);
-        return (return_value);
+	/* success */
+	Py_INCREF (return_value);
+	return (return_value);
       } else {
-        Py_DECREF (key_val);
-        PyErr_SetObject (PyExc_KeyError, key_val);
-        return NULL;
+	PyErr_SetObject (PyExc_KeyError, key_val);
+	return NULL;
       }
     } else {
-      Py_DECREF (key_val);
       PyErr_SetObject (PyExc_KeyError, key_val);
       return NULL;
     }
@@ -302,23 +285,19 @@ avl_tree_at_most (avl_treeobject * self, PyObject * args)
   if (!PyArg_ParseTuple (args, "O", &key_val)) {
     return NULL;
   } else {
-    Py_INCREF (key_val);
     if (self->tree->length) {
       result = avl_get_item_by_key_most (self->tree,
                                          (void *) key_val,
                                          (void **) &return_value);
       if (result == 0) {
-        /* success */
-        Py_INCREF (return_value);
-        Py_DECREF (key_val);
-        return (return_value);
+	/* success */
+	Py_INCREF (return_value);
+	return (return_value);
       } else {
-        Py_DECREF (key_val);
-        PyErr_SetObject (PyExc_KeyError, key_val);
-        return NULL;
+	PyErr_SetObject (PyExc_KeyError, key_val);
+	return NULL;
       }
     } else {
-      Py_DECREF (key_val);
       PyErr_SetObject (PyExc_KeyError, key_val);
       return NULL;
     }
@@ -338,21 +317,17 @@ avl_tree_has_key (avl_treeobject * self, PyObject * args)
   if (!PyArg_ParseTuple (args, "O", &key_val)) {
     return NULL;
   } else {
-    Py_INCREF (key_val);
     if (self->tree->length) {
       result = avl_get_item_by_key (self->tree,
                                     (void *) key_val,
                                     (void **) &return_value);
       if (result == 0) {
-        /* success */
-        Py_DECREF (key_val);
-        return (Py_BuildValue ("i", 1));
+	/* success */
+	return (Py_BuildValue ("i", 1));
       } else {
-        Py_DECREF (key_val);
-        return Py_BuildValue ("i", 0);
+	return Py_BuildValue ("i", 0);
       }
     } else {
-      Py_DECREF (key_val);
       return (Py_BuildValue ("i", 0));
     }
   }
@@ -471,11 +446,16 @@ static PyObject *
 avl_tree_from_tree (avl_treeobject * self,
                     PyObject * args)
 {
-  unsigned int low=0, high=self->tree->length - 1;
+  int low=0;
+  int high=self->tree->length;
 
   if (!PyArg_ParseTuple (args, "|ii", &low, &high)) {
     return NULL;
   }
+
+  /* match Python slicing ops: */
+  if (low < 0) low += self->tree->length;
+  if (high < 0) high += self->tree->length;
 
   return avl_tree_slice (self, low, high);
 }
@@ -495,16 +475,31 @@ static PyObject *
 avl_tree_slice_as_list (avl_treeobject * self, PyObject * args)
 {
   PyObject * list;
-  unsigned int ilow, ihigh;
+  int ilow = 0;
+  int ihigh = (int)self->tree->length;
   int result;
 
   if (!PyArg_ParseTuple (args, "|ii", &ilow, &ihigh)) {
     return NULL;
   }
 
-  if ((ilow < 0) || (ihigh > self->tree->length)) {
-    PyErr_SetString (PyExc_IndexError, "tree index out of range");
-    return NULL;
+  /* match Python slicing ops: */
+  if (ilow < 0) ilow += self->tree->length;
+  if (ihigh < 0) ihigh += self->tree->length;
+
+
+  /* We are attempting to match Python slicing on list objects,
+   * which is incredibly lenient. Basically, it is impossible to
+   * get an exception.
+   */
+
+  if (ilow < 0) ilow = 0;
+  if (ihigh < 0) ihigh = 0;
+  if ((unsigned long)ihigh > self->tree->length) {
+    ihigh = (int)self->tree->length;
+  }
+  if (ilow > ihigh) {
+    ilow = ihigh;
   }
 
   if (!(list = PyList_New (ihigh - ilow))) {
@@ -729,17 +724,13 @@ PyObject *
 avl_tree_item (avl_treeobject *self, int i)
 {
   void * value;
-  unsigned long index;
-
-  /* interpret a negative index normally */
-  if (i < 0) {
-    index = self->tree->length + i;
-  } else {
-    index = i;
-  }
+  unsigned long index = (unsigned long) i;
+  
+  /* Python takes care of negative indices for us, so if
+   * i is negative, that is an error. */
 
   /* range-check the index */
-  if (index >= self->tree->length) {
+  if (index >= self->tree->length || i < 0) {
     PyErr_SetString (PyExc_IndexError, "tree index out of range");
     return NULL;
   } else {
@@ -769,14 +760,19 @@ avl_tree_slice (avl_treeobject *self, int ilow, int ihigh)
   unsigned long m;
   avl_node * node;
 
-  /*
-   * Python takes care of negative indices, but someone can still
-   * ask for the -40th element of a 10-element tree
+  /* We are attempting to match Python slicing on list objects,
+   * which is incredibly lenient. Basically, it is impossible to
+   * get an exception.
    */
 
-  if ((ilow < 0) || ((unsigned long) ihigh > self->tree->length)) {
-    PyErr_SetString (PyExc_IndexError, "tree index out of range");
-    return NULL;
+  /* By the time we are called, the Python internals have
+   * already added the length of self to ilow and ihigh if they are
+   * negative. However, the values can still be negative or too large.
+   */
+  if (ilow < 0) ilow = 0;
+  if (ihigh < 0) ihigh = 0;
+  if ((unsigned long)ihigh > self->tree->length) {
+    ihigh = (int)self->tree->length;
   }
 
   new_tree = newavl_treeobject (self->compare_function);
@@ -784,10 +780,10 @@ avl_tree_slice (avl_treeobject *self, int ilow, int ihigh)
     return NULL;
   }
 
-  if (ilow >= ihigh) {
-    new_tree->tree->length = 0;
-    return (PyObject *) new_tree;
-  }
+  /* return empty tree in this degenerate case: */
+  if (ihigh <= ilow) {
+    return (PyObject *)new_tree;
+ }
 
   /* locate node <ilow> */
   node = self->tree->root->right;
