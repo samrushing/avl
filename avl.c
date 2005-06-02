@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 1995-1997 by Sam Rushing <rushing@nightmare.com>
  * Copyright (C) 2005 by Germanischer Lloyd AG
+ * Copyright (C) 2001-2005 by IronPort Systems, Inc.
  *
  *                         All Rights Reserved
  *
@@ -24,7 +25,7 @@
  *
  */
 
-/* $Id: avl.c,v 2.11 2005/06/01 23:06:46 rushing Exp rushing $ */
+/* $Id: avl.c,v 2.12 2005/06/01 23:49:23 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -106,7 +107,9 @@ avl_free_avl_tree (avl_tree * tree, avl_free_key_fun_type free_key_fun)
 
 int
 avl_insert_by_key (avl_tree * ob,
-                   void * key)
+                   void * key,
+                   unsigned int * index
+                   )
 {
   if (!(ob->root->right)) {
     avl_node * node = avl_new_avl_node (key, ob->root);
@@ -120,6 +123,7 @@ avl_insert_by_key (avl_tree * ob,
   } else { /* not self.right == None */
     avl_node *t, *p, *s, *q, *r;
     int a;
+    *index = 0;
 
     t = ob->root;
     s = p = t->right;
@@ -147,6 +151,7 @@ avl_insert_by_key (avl_tree * ob,
       } else {
         /* move right */
         q = p->right;
+        *index += AVL_GET_RANK(p);
         if (!q) {
           /* insert */
           avl_node * q_node = avl_new_avl_node (key, p);
