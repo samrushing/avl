@@ -2,6 +2,7 @@
 
 /*
  * Copyright (C) 1995-1997 by Sam Rushing <rushing@nightmare.com>
+ * Copyright (C) 2005 by Germanischer Lloyd AG
  *
  *                         All Rights Reserved
  *
@@ -24,11 +25,14 @@
  *
  */
 
-/* $Id: AVLmodule.c,v 2.4 1998/10/10 16:16:06 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 2.5 2005/06/01 23:07:59 rushing Exp rushing $ */
 
-
-#include "Python.h"
+#include <Python.h>
 #include "avl.h"
+
+#ifdef  __cplusplus
+extern "C" {
+#endif
 
 static PyObject *ErrorObject;
 
@@ -69,6 +73,7 @@ static avl_treeobject * avl_copy_avl_tree (avl_treeobject * source);
 
 /* ---------------------------------------------------------------- */
 
+static
 int
 avl_key_compare_for_python (void * compare_arg, void * a, void * b)
 {
@@ -111,7 +116,7 @@ avl_tree_insert(avl_treeobject * self, PyObject * args)
     return NULL;
   } else {
     Py_INCREF (val);
-    if (insert_by_key (self->tree, (void *) val) != 0) {
+    if (avl_insert_by_key (self->tree, (void *) val) != 0) {
       Py_DECREF (val);
       PyErr_SetString (ErrorObject, "error while inserting item");
       return NULL;
@@ -129,6 +134,7 @@ static char avl_tree_remove__doc__[] =
 
 /* remove_by_key's free_key_fun callback */
 
+static
 int
 avl_tree_key_free_fun (void * key)
 {
@@ -145,7 +151,7 @@ avl_tree_remove (avl_treeobject *self, PyObject *args)
     return NULL;
   } else {
     Py_INCREF(val);
-    if (remove_by_key (self->tree, (void *) val, avl_tree_key_free_fun) != 0) {
+    if (avl_remove_by_key (self->tree, (void *) val, avl_tree_key_free_fun) != 0) {
       Py_DECREF(val);
       PyErr_SetString (ErrorObject, "error while removing item");
       return NULL;
@@ -173,7 +179,7 @@ avl_tree_lookup (avl_treeobject * self, PyObject * args)
   } else {
     Py_INCREF (key_val);
     if (self->tree->length) {
-      result = get_item_by_key (self->tree, (void *) key_val, (void **) &return_value);
+      result = avl_get_item_by_key (self->tree, (void *) key_val, (void **) &return_value);
       if (result == 0) {
         /* success */
         Py_INCREF (return_value);
@@ -210,10 +216,10 @@ avl_tree_span (avl_treeobject * self, PyObject * args)
       /* only one key was specified */
       if (!high_key) {
         Py_INCREF (low_key);
-        result = get_span_by_key (self->tree,
-                                  (void *) low_key,
-                                  &low,
-                                  &high);
+        result = avl_get_span_by_key (self->tree,
+                                      (void *) low_key,
+                                      &low,
+                                      &high);
         Py_DECREF (low_key);
         if (result == 0) {
           /* success */
@@ -226,11 +232,11 @@ avl_tree_span (avl_treeobject * self, PyObject * args)
         /* they specified two keys */
         Py_INCREF (low_key);
         Py_INCREF (high_key);
-        result = get_span_by_two_keys (self->tree,
-                                       (void *) low_key,
-                                       (void *) high_key,
-                                       &low,
-                                       &high);
+        result = avl_get_span_by_two_keys (self->tree,
+                                           (void *) low_key,
+                                           (void *) high_key,
+                                           &low,
+                                           &high);
         Py_DECREF (low_key);
         Py_DECREF (high_key);
         if (result == 0) {
@@ -262,9 +268,9 @@ avl_tree_at_least (avl_treeobject * self, PyObject * args)
   } else {
     Py_INCREF (key_val);
     if (self->tree->length) {
-      result = get_item_by_key_least (self->tree,
-                                      (void *) key_val,
-                                      (void **) &return_value);
+      result = avl_get_item_by_key_least (self->tree,
+                                          (void *) key_val,
+                                          (void **) &return_value);
       if (result == 0) {
         /* success */
         Py_INCREF (return_value);
@@ -298,9 +304,9 @@ avl_tree_at_most (avl_treeobject * self, PyObject * args)
   } else {
     Py_INCREF (key_val);
     if (self->tree->length) {
-      result = get_item_by_key_most (self->tree,
-                                     (void *) key_val,
-                                     (void **) &return_value);
+      result = avl_get_item_by_key_most (self->tree,
+                                         (void *) key_val,
+                                         (void **) &return_value);
       if (result == 0) {
         /* success */
         Py_INCREF (return_value);
@@ -334,9 +340,9 @@ avl_tree_has_key (avl_treeobject * self, PyObject * args)
   } else {
     Py_INCREF (key_val);
     if (self->tree->length) {
-      result = get_item_by_key (self->tree,
-                                (void *) key_val,
-                                (void **) &return_value);
+      result = avl_get_item_by_key (self->tree,
+                                    (void *) key_val,
+                                    (void **) &return_value);
       if (result == 0) {
         /* success */
         Py_DECREF (key_val);
@@ -365,6 +371,7 @@ avl_tree_verify (avl_treeobject * self, PyObject * args)
 static char avl_tree_print_internal_structure__doc__[] =
 "Print the internal structure of the AVL tree (testing only)";
 
+static
 int
 avl_tree_key_printer (char * buffer, void * key)
 {
@@ -408,6 +415,7 @@ avl_tree_print_internal_structure (avl_treeobject * self, PyObject * args)
  * remove half the function calls.
  */
 
+static
 int
 tree_from_tree (avl_node ** node,
                 avl_node * parent,
@@ -424,12 +432,12 @@ tree_from_tree (avl_node ** node,
     avl_node * new_node;
     int left_height, right_height;
 
-    new_node = new_avl_node ((void *) 0, parent);
+    new_node = avl_new_avl_node ((void *) 0, parent);
     if (!new_node) {
       return -1;
     }
     *address = new_node;
-    SET_RANK (new_node, (midway-low)+1);
+    AVL_SET_RANK (new_node, (midway-low)+1);
     left_height = tree_from_tree (node, new_node, &(new_node->left), low, midway);
     if (left_height < 0) {
       return -1;
@@ -438,20 +446,20 @@ tree_from_tree (avl_node ** node,
     item = (PyObject *) (*node)->key;
     Py_INCREF (item);
     new_node->key = (void *) item;
-    *node = get_successor (*node);
+    *node = avl_get_successor (*node);
 
     right_height = tree_from_tree (node, new_node, &(new_node->right), midway+1, high);
     if (right_height  < 0) {
       return -1;
     }
     if (left_height > right_height) {
-      SET_BALANCE (new_node, -1);
+      AVL_SET_BALANCE (new_node, -1);
       return left_height + 1;
     } else if (right_height > left_height) {
-      SET_BALANCE (new_node, +1);
+      AVL_SET_BALANCE (new_node, +1);
       return right_height + 1;
     } else {
-      SET_BALANCE (new_node, 0);
+      AVL_SET_BALANCE (new_node, 0);
       return left_height + 1;
     }
   }
@@ -472,6 +480,7 @@ avl_tree_from_tree (avl_treeobject * self,
   return avl_tree_slice (self, low, high);
 }
 
+static
 int
 slice_callback (unsigned long index, void * key, void * arg)
 {
@@ -502,11 +511,11 @@ avl_tree_slice_as_list (avl_treeobject * self, PyObject * args)
     return NULL;
   }
   if (ihigh - ilow) {
-    result = iterate_index_range (self->tree,
-                                  slice_callback,
-                                  (unsigned long) ilow,
-                                  (unsigned long) ihigh,
-                                  (void *) list);
+    result = avl_iterate_index_range (self->tree,
+                                      slice_callback,
+                                      (unsigned long) ilow,
+                                      (unsigned long) ihigh,
+                                      (void *) list);
     if (result != 0) {
       PyErr_SetString (ErrorObject, "error while accessing slice");
       return NULL;
@@ -540,14 +549,14 @@ newavl_treeobject (PyObject * compare_function)
 {
   avl_treeobject *self;
 
-  self = PyObject_NEW(avl_treeobject, &Avl_treetype);
+  self = PyObject_New (avl_treeobject, &Avl_treetype);
   if (self == NULL) {
     return NULL;
   }
 
-  self->tree = new_avl_tree (avl_key_compare_for_python, (void *) self);
+  self->tree = avl_new_avl_tree (avl_key_compare_for_python, (void *) self);
   if (!self->tree) {
-    PyMem_DEL (self);
+    PyObject_Del (self);
     return NULL;
   }
   self->node_cache = NULL;
@@ -560,10 +569,11 @@ newavl_treeobject (PyObject * compare_function)
 static void
 avl_tree_dealloc(avl_treeobject *self)
 {
-  free_avl_tree (self->tree, avl_tree_key_free_fun);
-  PyMem_DEL(self);
+  avl_free_avl_tree (self->tree, avl_tree_key_free_fun);
+  PyObject_Del(self);
 }
 
+static
 int
 avl_tree_print_helper (avl_node * node,
                        long * index,
@@ -590,7 +600,8 @@ avl_tree_print_helper (avl_node * node,
   return 0;
 }
 
-static int
+static
+int
 avl_tree_print(avl_treeobject *self, FILE *fp, int flags)
 {
   if (!self->tree->length) {
@@ -608,21 +619,24 @@ avl_tree_print(avl_treeobject *self, FILE *fp, int flags)
 }
 
 
-static PyObject *
+static
+PyObject *
 avl_tree_getattr(avl_treeobject *self, char *name)
 {
         /* XXXX Add your own getattr code here */
         return Py_FindMethod(avl_tree_methods, (PyObject *)self, name);
 }
 
-static int
+static
+int
 avl_tree_setattr(avl_treeobject *self, char *name, PyObject *v)
 {
         /* XXXX Add your own setattr code here */
         return -1;
 }
 
-static PyObject *
+static
+PyObject *
 avl_tree_repr (avl_treeobject *self)
 {
   PyObject * s;
@@ -643,7 +657,7 @@ avl_tree_repr (avl_treeobject *self)
         PyString_Concat (&s, comma);
       }
       PyString_ConcatAndDel (&s, PyObject_Repr ((PyObject *)node->key));
-      node = get_successor (node);
+      node = avl_get_successor (node);
     }
     Py_XDECREF (comma);
     PyString_ConcatAndDel (&s, PyString_FromString ("]"));
@@ -655,7 +669,8 @@ avl_tree_repr (avl_treeobject *self)
 
 /* Code to handle accessing AVL tree objects as sequence objects */
 
-static int
+static
+int
 avl_tree_length (avl_treeobject *self)
 {
   return (int) self->tree->length;
@@ -663,7 +678,8 @@ avl_tree_length (avl_treeobject *self)
 
 /* todo: support tree+list */
 
-static PyObject *
+static
+PyObject *
 avl_tree_concat (avl_treeobject *self, avl_treeobject *bb)
 {
   avl_treeobject * self_copy;
@@ -689,24 +705,26 @@ avl_tree_concat (avl_treeobject *self, avl_treeobject *bb)
      */
     while (bb_node_counter--) {
       Py_INCREF ((PyObject *)bb_node->key);
-      if (insert_by_key (self_copy->tree, (void *) bb_node->key) != 0) {
+      if (avl_insert_by_key (self_copy->tree, (void *) bb_node->key) != 0) {
         avl_tree_dealloc (self_copy);
         return NULL;
       }
-      bb_node = get_successor (bb_node);
+      bb_node = avl_get_successor (bb_node);
     }
   }
   return (PyObject *) self_copy;
 }
 
-static PyObject *
+static
+PyObject *
 avl_tree_repeat(avl_treeobject * self, int n)
 {
   PyErr_SetString (PyExc_TypeError,"repeat operation undefined");
   return NULL;
 }
 
-static PyObject *
+static
+PyObject *
 avl_tree_item (avl_treeobject *self, int i)
 {
   void * value;
@@ -728,11 +746,11 @@ avl_tree_item (avl_treeobject *self, int i)
 
     /* index cache */
     if (self->node_cache && (index == (self->cache_index + 1))) {
-      self->node_cache = get_successor (self->node_cache);
+      self->node_cache = avl_get_successor (self->node_cache);
       self->cache_index++;
       value = self->node_cache->key;
     }
-    if (get_item_by_index (self->tree, index, &value) != 0) {
+    if (avl_get_item_by_index (self->tree, index, &value) != 0) {
       PyErr_SetString (ErrorObject, "error while accessing item");
       return NULL;
     } else {
@@ -742,7 +760,8 @@ avl_tree_item (avl_treeobject *self, int i)
   }
 }
 
-static PyObject *
+static
+PyObject *
 avl_tree_slice (avl_treeobject *self, int ilow, int ihigh)
 {
   avl_treeobject * new_tree;
@@ -764,14 +783,19 @@ avl_tree_slice (avl_treeobject *self, int ilow, int ihigh)
     return NULL;
   }
 
+  if (ilow >= ihigh) {
+    new_tree->tree->length = 0;
+    return (PyObject *) new_tree;
+  }
+
   /* locate node <ilow> */
   node = self->tree->root->right;
   m = (unsigned long) ilow + 1;
   while (1) {
-    if (m < GET_RANK(node)) {
+    if (m < AVL_GET_RANK(node)) {
       node = node->left;
-    } else if (m > GET_RANK(node)) {
-      m = m - GET_RANK(node);
+    } else if (m > AVL_GET_RANK(node)) {
+      m = m - AVL_GET_RANK(node);
       node = node->right;
     } else {
       break;
@@ -809,7 +833,7 @@ static char Avl_treetype__doc__[] =
 static PyTypeObject Avl_treetype = {
         PyObject_HEAD_INIT(&PyType_Type)
         0,                              /*ob_size*/
-        "AVL tree",                     /*tp_name*/
+        "avl.tree",                     /*tp_name*/
         sizeof(avl_treeobject),         /*tp_basicsize*/
         0,                              /*tp_itemsize*/
         /* methods */
@@ -826,20 +850,23 @@ static PyTypeObject Avl_treetype = {
         (ternaryfunc)0,         /*tp_call*/
         (reprfunc)0,            /*tp_str*/
 
-        /* Space for future expansion */
-        0L,0L,0L,0L,
+        0,                         /*tp_getattro*/
+        0,                         /*tp_setattro*/
+        0,                         /*tp_as_buffer*/
+        Py_TPFLAGS_DEFAULT,        /*tp_flags*/
         Avl_treetype__doc__ /* Documentation string */
 };
 
 /* End of code for AVL tree objects */
 /* -------------------------------------------------------- */
 
+static
 int
 avl_copy_avl_node (avl_node * source_node,
                    avl_node * dest_parent,
                    avl_node ** dest_node)
 {
-  avl_node * new_node = new_avl_node(source_node->key, dest_parent);
+  avl_node * new_node = avl_new_avl_node(source_node->key, dest_parent);
 
   if (!new_node) {
     return -1;
@@ -869,7 +896,8 @@ avl_copy_avl_node (avl_node * source_node,
   }
 }
 
-static avl_treeobject *
+static
+avl_treeobject *
 avl_copy_avl_tree (avl_treeobject * source)
 {
   avl_treeobject * dest;
@@ -901,6 +929,7 @@ avl_copy_avl_tree (avl_treeobject * source)
  * remove half the function calls.
  */
 
+static
 int
 tree_from_list (PyObject * list,
                 avl_node * parent,
@@ -917,13 +946,13 @@ tree_from_list (PyObject * list,
     avl_node * new_node;
     int left_height, right_height;
 
-    new_node = new_avl_node ((void *) item, parent);
+    new_node = avl_new_avl_node ((void *) item, parent);
     if (!new_node) {
       return -1;
     }
     *address = new_node;
     Py_INCREF (item);
-    SET_RANK (new_node, (midway-low)+1);
+    AVL_SET_RANK (new_node, (midway-low)+1);
     left_height = tree_from_list (list, new_node, &(new_node->left), low, midway);
     if (left_height < 0) {
       return -1;
@@ -933,22 +962,22 @@ tree_from_list (PyObject * list,
       return -1;
     }
     if (left_height > right_height) {
-      SET_BALANCE (new_node, -1);
+      AVL_SET_BALANCE (new_node, -1);
       return left_height + 1;
     } else if (right_height > left_height) {
-      SET_BALANCE (new_node, +1);
+      AVL_SET_BALANCE (new_node, +1);
       return right_height + 1;
     } else {
-      SET_BALANCE (new_node, 0);
+      AVL_SET_BALANCE (new_node, 0);
       return left_height + 1;
     }
   }
 }
 
-static char avl_new_avl_from_list__doc__[] =
-"construct a new avl tree from a list (sorts the list as a side-effect!)";
+/* construct a new avl tree from a list (sorts the list as a side-effect!) */
 
-static PyObject *
+static
+PyObject *
 avl_new_avl_from_list (PyObject * self, /* not used */
                        PyObject * args)
 {
@@ -990,7 +1019,8 @@ static char avl_newavl__doc__[] =
 "An optional second argument is a key-comparison function\n"
 ;
 
-static PyObject *
+static
+PyObject *
 avl_newavl(PyObject * self,     /* Not used */
            PyObject * args)
 {
@@ -1040,9 +1070,16 @@ initavl(void)
   ErrorObject = PyString_FromString("avl.error");
   PyDict_SetItemString(d, "error", ErrorObject);
 
-  /* XXXX Add constants here */
-
+  if (PyType_Ready(&Avl_treetype) < 0) {
+    return;
+  }
+  
   /* Check for errors */
-  if (PyErr_Occurred())
+  if (PyErr_Occurred()) {
     Py_FatalError("can't initialize module avl");
+  }
 }
+
+#ifdef  __cplusplus
+}
+#endif
