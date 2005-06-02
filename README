@@ -186,7 +186,7 @@ This is still very fast, as both operations are O(log n)
 
 The results of such an illegal modification are unspecified, and are
 likely to crash the program.  The only way to completely avoid this
-problem is to use only immutable types.  This restriction seemed to
+problem is to use only immutable types.  This restriction seemed too
 severe to enforce.  So be careful out there!
 *** -------------------- Note --------------------***
 
