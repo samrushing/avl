@@ -26,7 +26,7 @@
  *
  */
 
-/* $Id: AVLmodule.c,v 2.10 2005/06/02 00:54:34 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 2.11 2005/06/02 01:06:44 rushing Exp rushing $ */
 
 #include <Python.h>
 #include "avl.h"
@@ -36,6 +36,12 @@ extern "C" {
 #endif
 
 static PyObject *ErrorObject;
+
+#ifndef PyDoc_STR
+#define PyDoc_VAR(name)         static char name[]
+#define PyDoc_STR(str)          (str)
+#define PyDoc_STRVAR(name, str) PyDoc_VAR(name) = PyDoc_STR(str)
+#endif
 
 /* ----------------------------------------------------- */
 
@@ -165,8 +171,8 @@ avl_tree_remove (avl_treeobject *self, PyObject *args)
 
 PyDoc_STRVAR (
   avl_tree_lookup__doc__,
-  "Return the first object comparing equal to the <key> argument";
-  )
+  "Return the first object comparing equal to the <key> argument"
+  );
 
 static PyObject *
 avl_tree_lookup (avl_treeobject * self, PyObject * args)
