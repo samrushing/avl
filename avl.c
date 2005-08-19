@@ -25,7 +25,7 @@
  *
  */
 
-/* $Id: avl.c,v 2.14 2005/06/02 00:59:09 rushing Exp rushing $ */
+/* $Id: avl.c,v 2.15 2005/06/02 01:06:38 rushing Exp rushing $ */
 
 /*
  * This is a fairly straightfoward translation of a prototype
@@ -809,14 +809,21 @@ avl_get_span_by_key (avl_tree * tree,
     }
     /* search right */
     right = avl_get_successor (node);
-    j = m;
-    while ((j <= tree->length) && (tree->compare_fun (tree->compare_arg, key, right->key) == 0)) {
-      right = avl_get_successor (right);
-      j = j + 1;
+    if (right == tree->root) {
+      // special case, tree->size == 1
+      *low = i;
+      *high = i + 1;
+      return 0;
+    } else {
+      j = m;
+      while ((j <= tree->length) && (tree->compare_fun (tree->compare_arg, key, right->key) == 0)) {
+        right = avl_get_successor (right);
+        j = j + 1;
+      }
+      *low = i;
+      *high = j + 1;
+      return 0;
     }
-    *low = i;
-    *high = j + 1;
-    return 0;
   } else {
     *low = *high = m;
   }
@@ -862,9 +869,14 @@ avl_get_span_by_two_keys (avl_tree * tree,
     avl_node * right;
     /* search right */
     right = avl_get_successor (high_node);
-    while ((j <= tree->length) && (tree->compare_fun (tree->compare_arg, high_key, right->key) == 0)) {
-      right = avl_get_successor (right);
-      j = j + 1;
+    if (right == tree->root) {
+      // special case, tree->size == 1
+      j = i + 1;
+    } else {
+      while ((j <= tree->length) && (tree->compare_fun (tree->compare_arg, high_key, right->key) == 0)) {
+        right = avl_get_successor (right);
+        j = j + 1;
+      }
     }
   } else {
     j = j + 1;
