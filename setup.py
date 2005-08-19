@@ -16,7 +16,7 @@ ext_macros = []
 #ext_macros = ['DEBUG_AVL']
 
 setup (name         = "avl",
-       version      = "2.1.0",
+       version      = "2.1.2",
        description  = "AVL Tree Objects for Python",
        author       = 'Samual M Rushing',
        author_email = "[hidden]",
@@ -31,6 +31,9 @@ setup (name         = "avl",
 ## ======================================================================
 ##   Update Informations
 ##  $Log: setup.py,v $
+##  Revision 1.2  2005/06/02 01:17:12  rushing
+##  minor change to url
+##
 ##  Revision 1.1  2005/06/02 01:16:40  rushing
 ##  Initial revision
 ##
