@@ -216,7 +216,7 @@ interface to python.
 Several new functions are visible from python, including two from
 David Ascher <david_ascher@brown.edu> (at_least() and at_most()).
 
-# 't.span()' returns a pair of indices into the three that 'span' the
+# 't.span()' returns a pair of indices into the tree that 'span' the
 # given key or key pair.  For example:
 
 >>> t
@@ -271,3 +271,16 @@ And From IronPort:
   Martin Baker (made slicing match Python's, other changes)
   Eric Huss (refcount touch-ups, lots of other work)
   Sam Rushing
+
+# ===========================================================================
+# release 2.1.2 (Aug 2005)
+# ===========================================================================
+
+Fixed a bug reported by Kenneth Duda:
+
+  import avl
+  z = avl.newavl( None, lambda x,y: cmp(x[0],y[0]) )
+  z.insert('hello')
+  z.span('h')
+
+exceptions.SystemError: 'NULL object passed to Py_BuildValue'
