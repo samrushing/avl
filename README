@@ -284,3 +284,11 @@ Fixed a bug reported by Kenneth Duda:
   z.span('h')
 
 exceptions.SystemError: 'NULL object passed to Py_BuildValue'
+
+# ===========================================================================
+# release 2.1.3 (Sep 2005)
+# ===========================================================================
+
+Win32 compilation issue reported by Berthold Höllmann:
+
+  AVLmodule.c(855) : error C2099: initializer is not a constant
