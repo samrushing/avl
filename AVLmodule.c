@@ -26,7 +26,7 @@
  *
  */
 
-/* $Id: AVLmodule.c,v 2.12 2005/06/21 18:29:48 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 2.13 2005/09/20 19:25:17 rushing Exp rushing $ */
 
 #include <Python.h>
 #include "avl.h"
@@ -1081,7 +1081,7 @@ PyDoc_STRVAR (
 void
 initavl(void)
 {
-  PyObject *m, *d;
+  PyObject *m, *d, *v;
 
   /* Create the module and add the functions */
   m = Py_InitModule4 (
@@ -1096,6 +1096,10 @@ initavl(void)
   d = PyModule_GetDict(m);
   ErrorObject = PyString_FromString("avl.error");
   PyDict_SetItemString(d, "error", ErrorObject);
+
+  v = PyString_FromString ("2.1.3");
+  PyDict_SetItemString(d, "__version__", v);
+  Py_XDECREF(v);
 
   if (PyType_Ready(&Avl_treetype) < 0) {
     return;
