@@ -26,7 +26,7 @@
  *
  */
 
-/* $Id: AVLmodule.c,v 2.11 2005/06/02 01:06:44 rushing Exp rushing $ */
+/* $Id: AVLmodule.c,v 2.12 2005/06/21 18:29:48 rushing Exp rushing $ */
 
 #include <Python.h>
 #include "avl.h"
@@ -852,7 +852,7 @@ PyDoc_STRVAR (
   );
 
 static PyTypeObject Avl_treetype = {
-        PyObject_HEAD_INIT(&PyType_Type)
+        PyObject_HEAD_INIT (NULL)
         0,                              /*ob_size*/
         "avl.tree",                     /*tp_name*/
         sizeof(avl_treeobject),         /*tp_basicsize*/
