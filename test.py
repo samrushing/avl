@@ -13,7 +13,7 @@ class timer:
         print '%f seconds' % (time.time() - self.start)
 
 def generate_test_numbers (n=10000):
-    return map (lambda x: int(random.randint(0, 1000000)), range(n))
+    return [random.randint(0, 1000000) for x in xrange (n)]
 
 def fill_up (tree, nums):
     print 'filling up...'
