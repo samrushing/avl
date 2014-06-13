@@ -4,7 +4,6 @@
  * Copyright (C) 2001-2005 by IronPort Systems, Inc.
  */
 
-/* $Id: avl.h,v 2.9 2005/06/02 00:59:03 rushing Exp rushing $ */
 
 #ifdef __cplusplus
 extern "C" {

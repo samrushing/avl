@@ -25,8 +25,6 @@
  *
  */
 
-/* $Id: avl.c,v 2.15 2005/06/02 01:06:38 rushing Exp rushing $ */
-
 /*
  * This is a fairly straightfoward translation of a prototype
  * written in python, 'avl_tree.py'. Read that file first.

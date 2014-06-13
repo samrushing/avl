@@ -26,8 +26,6 @@
  *
  */
 
-/* $Id: AVLmodule.c,v 2.13 2005/09/20 19:25:17 rushing Exp rushing $ */
-
 #include <Python.h>
 #include "avl.h"
 
