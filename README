@@ -1,4 +1,9 @@
 
+Note: Although this README mostly talks about Python, the included
+files 'avl.h' and 'avl.c' implement a completely generic C Library
+that can easily be used outside of Python.
+
+
                      AVL Tree Objects for Python
 
 This package implements a dual-personality builtin object for Python,
