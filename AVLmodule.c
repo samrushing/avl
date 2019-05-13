@@ -359,7 +359,7 @@ PyDoc_STRVAR (
 static PyObject *
 avl_tree_verify (avl_treeobject * self, PyObject * args)
 {
-  return (Py_BuildValue ("i", verify (self->tree)));
+  return (Py_BuildValue ("i", avl_verify (self->tree)));
 }
 
 PyDoc_STRVAR (
@@ -389,7 +389,7 @@ avl_tree_key_printer (char * buffer, void * key)
 static PyObject *
 avl_tree_print_internal_structure (avl_treeobject * self, PyObject * args)
 {
-  print_tree (self->tree, avl_tree_key_printer);
+  avl_print_tree (self->tree, avl_tree_key_printer);
   Py_INCREF (Py_None);
   return Py_None;
 }
@@ -833,13 +833,14 @@ avl_tree_slice (avl_treeobject *self, int ilow, int ihigh)
 }
 
 static PySequenceMethods avl_tree_as_sequence = {
-        (inquiry)avl_tree_length,               /*sq_length*/
+        (lenfunc)avl_tree_length,               /*sq_length*/
         (binaryfunc)avl_tree_concat,            /*sq_concat*/
-        (intargfunc)avl_tree_repeat,            /*sq_repeat*/
-        (intargfunc)avl_tree_item,              /*sq_item*/
-        (intintargfunc)avl_tree_slice,          /*sq_slice*/
-        (intobjargproc)0,                       /*sq_ass_item*/
-        (intintobjargproc)0,                    /*sq_ass_slice*/
+        (ssizeargfunc)avl_tree_repeat,          /*sq_repeat*/
+        (ssizeargfunc)avl_tree_item,            /*sq_item*/
+        (ssizessizeargfunc)avl_tree_slice,      /*sq_slice*/
+        (ssizeobjargproc)0,                     /*sq_ass_item*/
+        (ssizessizeobjargproc)0,                /*sq_ass_slice*/
+        (objobjproc)avl_tree_has_key,           /* sq_contains */
 };
 
 /* -------------------------------------------------------------- */

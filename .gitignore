@@ -1,0 +1,9 @@
+**/*.pyc
+/GPATH
+/GRTAGS
+/GTAGS
+/ID
+/avl.egg-info
+/avl.so
+/build
+/venv*
