@@ -88,7 +88,7 @@ def slice_test(tree, num_slices=100):
     t.end()
 
 
-def test(n):
+def do_test(n):
     tree = avl.newavl()
     print('generating random numbers...')
     t = timer()
@@ -99,17 +99,17 @@ def test(n):
     empty(tree)
 
 
-if __name__ == '__main__':
-    print(sys.argv)
-    if len(sys.argv) > 1:
-        iterations = int(sys.argv[1])
-        if len(sys.argv) > 2:
-            test_size = int(sys.argv[2])
-        else:
-            test_size = 10000
-    else:
-        iterations = 100
-        test_size = 10000
+def test_workout():
+    # print(sys.argv)
+    # if len(sys.argv) > 1:
+    #     iterations = int(sys.argv[1])
+    #     if len(sys.argv) > 2:
+    #         test_size = int(sys.argv[2])
+    #     else:
+    #         test_size = 10000
+    # else:
+    iterations = 100
+    test_size = 10000
     for i in range(iterations):
         print('test %d' % i)
-        test(test_size)
+        do_test(test_size)

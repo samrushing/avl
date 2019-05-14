@@ -17,7 +17,7 @@ setup(
     author_email="[hidden]",
     license="BSD",
     url='https://github.com/samrushing/avl',
-    libraries=[("avl", {"sources": ["avl.c"]})],
+    libraries=[("avl", {"sources": ["lib/avl.c"]})],
     ext_modules=[
         Extension(
             'avl',
