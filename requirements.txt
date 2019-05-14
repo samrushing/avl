@@ -1,0 +1,6 @@
+Cython
+pytest
+pytest-cache
+pytest-cov
+pytest-isort
+pytest-pep8
