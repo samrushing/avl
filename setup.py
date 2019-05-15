@@ -17,14 +17,14 @@ setup(
     author_email="[hidden]",
     license="BSD",
     url='https://github.com/samrushing/avl',
-    libraries=[("avl", {"sources": ["lib/avl.c"]})],
+    libraries=[("avl", {"sources": ["lib/avl.c"],
+                        "include_dirs": ["./lib/"]})],
     ext_modules=[
         Extension(
             'avl',
             src,
             define_macros=ext_macros,
-            library_dirs=['.'],
-            libraries=['avl'],
+            include_dirs=["lib"],
         )
     ]
 )
