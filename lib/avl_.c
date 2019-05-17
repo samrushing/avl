@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "avl.h"
+#include "avl_.h"
 
 avl_node *
 avl_new_avl_node (void *            key,

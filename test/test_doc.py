@@ -2,34 +2,37 @@
 # -*- coding: utf-8 -*-
 """test cases from documentation.
 """
-from __future__ import (
-    division, print_function, absolute_import, unicode_literals)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
-# Standard libraries.
-import random as rand
+import sys
 
-# Third party libraries.
+# DNV GL libraries.
+import avl
 import pytest
 
-import avl
-
-
-@pytest.fixture
-def random():
-    rand.seed(0)
 
 # Usage:
-
-
 def test_1():
     t = avl.newavl()
     assert str(t) == "[]"
+
+
+def test_1_repr():
+    t = avl.newavl()
+    assert repr(t) == "tree([], None)"
 
 
 def test_2():
     t = avl.newavl()
     t.insert(50)
     assert str(t) == "[50]"
+
+
+def test_2_repr():
+    t = avl.newavl()
+    t.insert(50)
+    assert repr(t) == "tree([50], None)"
 
 
 def test_3():
@@ -48,18 +51,19 @@ def test_4():
 
 
 @pytest.fixture
-def random_tree(random):
-    t = avl.newavl()
-    for x in range(20):
-        t.insert(rand.randint(0, 100))
-    return t
+def random_tree():
+    return avl.newavl(
+        [25, 26, 28, 30, 40, 42, 48, 50, 51, 58, 62, 76, 76, 79, 81, 85, 91, 91,
+         91, 99])
 
 
 def test_5(random_tree):
 
     assert str(random_tree) == (
         "[25, 26, 28, 30, 40, 42, 48, 50, 51, 58, 62, "
-        "76, 76, 79, 81, 85, 91, 91, 91, 99]")
+        "76, 76, 79, 81, 85, 91, 91, 91, 99]"
+    )
+
 
 # if you've compiled in the debugging code (-DDEBUG_AVL)
 #
@@ -95,13 +99,20 @@ def test_5(random_tree):
 # final number is the 'rank' of the node, used internally to quickly
 # locate a node of a certain index - it's the number of nodes in the
 # left subtree, plus one.
+def test_print_tree(random_tree):
+    print
+    random_tree.print_internal_structure()
+
+
+def test_verify(random_tree):
+    assert random_tree.verify()
 
 
 # create a new tree from a list.
 # Note: this sorts the list as a side-effect, if you don't
 # want that, use a copy (i.e., 'l = avl.from_list(my_list[:])')
 def test_6():
-    t = avl.newavl(range(30))
+    t = avl.newavl([i for i in range(30)])
     assert len(t) == 30
 
 
@@ -109,12 +120,17 @@ def test_6():
 # Note: you cannot assign to the items in the tree, as
 # this might change the relative order of the keys.
 def test_7():
-    t = avl.newavl(range(30))
+    t = avl.newavl([i for i in range(30)])
     assert t[25] == 25
 
 
+def test_7_a():
+    t = avl.newavl([i for i in range(30)][::2])
+    assert t[12] == 24
+
+
 def test_8():
-    t = avl.newavl(range(30))
+    t = avl.newavl([i for i in range(30)])
     assert t[-1] == 29
 
 
@@ -131,15 +147,34 @@ def test_10(random_tree):
 
 @pytest.fixture
 def mixed_tree():
-    t = avl.newavl(range(10))
-    t.insert('Hey, where will this go?')
+    t = avl.newavl([i for i in range(10)])
+    t.insert("Hey, where will this go?")
     return t
 
 
 # You can insert any python object:
 def test_11(mixed_tree):
-    assert str(mixed_tree) == (
-        "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, u'Hey, where will this go?']")
+    if sys.version_info < (3, ):
+        assert str(mixed_tree) == (
+            "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, Hey, where will this go?]"
+        )
+    else:
+        assert str(mixed_tree) == (
+            "[Hey, where will this go?, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
+        )
+
+
+def test_11_repr(mixed_tree):
+    if sys.version_info < (3, ):
+        assert repr(mixed_tree) == (
+            "tree([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, u'Hey, where will this go?']"
+            ", None)"
+        )
+    else:
+        assert repr(mixed_tree) == (
+            "tree(['Hey, where will this go?', 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
+            ", None)"
+        )
 
 
 # is a certain element in the tree?
@@ -156,9 +191,9 @@ def test_14_a(mixed_tree):
     assert mixed_tree.has_key(5)
 
 
-@pytest.mark.xfail
 def test_14_b(mixed_tree):
     assert 5 in mixed_tree
+
 
 def test_15_a(mixed_tree):
     assert not mixed_tree.has_key(34)
@@ -166,6 +201,7 @@ def test_15_a(mixed_tree):
 
 def test_15_b(mixed_tree):
     assert 34 not in mixed_tree
+
 
 # lookup is a little tricky, because it returns the first object in the
 # tree that compares equal to the key you give.  For builtin objects,
@@ -189,12 +225,30 @@ def test_15_b(mixed_tree):
 def test_copy(mixed_tree):
     t2 = avl.newavl(mixed_tree)
     assert t2 is not mixed_tree
+    if sys.version_info < (3, ):
+        assert str(mixed_tree) == (
+            "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, Hey, where will this go?]"
+        )
+        assert str(t2) == (
+            "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, Hey, where will this go?]"
+        )
+    else:
+        assert str(mixed_tree) == (
+            "[Hey, where will this go?, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
+        )
+        assert str(t2) == (
+            "[Hey, where will this go?, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
+        )
+    t2 = None
+
 
 # to concatenate two trees
 def test_concatenate():
-    t1 = avl.newavl(range(5))
-    t2 = avl.newavl(range(6, 15, 2))
+    t1 = avl.newavl([i for i in range(5)])
+    t2 = avl.newavl([i for i in range(6, 15, 2)])
     assert str(t1 + t2) == "[0, 1, 2, 3, 4, 6, 8, 10, 12, 14]"
+
+
 # Note: this is the equivalent of creating a
 #  copy of t1, and then inserting all the elements
 #  of t2 in turn.
@@ -219,48 +273,46 @@ def test_concatenate():
 
 @pytest.fixture
 def t():
-    return avl.newavl([1,2,3,4,5])
+    return avl.newavl([1, 2, 3, 4, 5])
 
 
 # 't.span()' returns a pair of indices into the tree that 'span' the
 # given key or key pair.  For example:
 def test_span(t):
-    assert t.span(4) == (3,4)
+    assert t.span(4) == (3, 4)
 
 
 def test_splice(t):
     assert str(t[3:4]) == "[4]"
 
 
-def test_span(random):
-    t = avl.newavl([rand.randint(0,1000) for _ in range(10)])
-    assert t.span(300,400) == (1, 2)
+@pytest.fixture
+def random_tree2():
+    return avl.tree([864, 394, 776, 911, 430, 41, 265, 988, 523, 497])
+
+def test_span_1(random_tree2):
+    assert random_tree2.span(300, 400) == (1, 2)
 
 
-def test_span_1(random):
-    t = avl.newavl([rand.randint(0,1000) for _ in range(10)])
-    assert str(t[1:2]) == "[303]"
+def test_span_1(random_tree2):
+    assert str(random_tree2[1:2]) == "[265]"
 
 
-def test_span_2(random):
-    t = avl.newavl([rand.randint(0,1000) for _ in range(10)])
-    assert t.span(200,500) == (0, 5)
+def test_span_2(random_tree2):
+    assert random_tree2.span(200, 500) == (1, 5)
 
 
-def test_span_3(random):
-    t = avl.newavl([rand.randint(0,1000) for _ in range(10)])
-    assert str(t[0:5]) == "[259, 303, 405, 420, 477]"
+def test_span_3(random_tree2):
+    assert str(random_tree2[1:5]) == "[265, 394, 430, 497]"
 
 
 # at_least() returns the first object comparing greater to or equal to
 # the <key> argument.
-def test_at_least(random):
-    t = avl.newavl([rand.randint(0,1000) for _ in range(10)])
-    assert t.at_least(400) == 405
+def test_at_least(random_tree2):
+    assert random_tree2.at_least(400) == 430
 
 
 # at_most() returns the first object comparing less than or equal to
 # the <key> argument.
-def test_at_most(random):
-    t = avl.newavl([rand.randint(0,1000) for _ in range(10)])
-    assert t.at_most(800) == 784
+def test_at_most(random_tree2):
+    assert random_tree2.at_most(800) == 776

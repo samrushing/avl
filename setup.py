@@ -1,30 +1,37 @@
 # -*- Mode: Python; coding: iso-8859-1 -*-
-from __future__ import division, print_function, absolute_import
+from __future__ import absolute_import, division, print_function
 
+from distutils.extension import Extension
+
+# Third party libraries.
+from Cython.Build import cythonize
 # Standard libraries.
 from setuptools import Extension, setup
 
-src = ['AVLmodule.c']
-
-ext_macros = []
-ext_macros = [('DEBUG_AVL', None)]
+src = ["AVLmodule.c"]
 
 setup(
     name="avl",
-    version="2.1.4",
+    version="2.2.0a1",
     description="AVL Tree Objects for Python",
-    author='Samual M Rushing',
+    author="Samual M Rushing",
     author_email="[hidden]",
     license="BSD",
-    url='https://github.com/samrushing/avl',
-    libraries=[("avl", {"sources": ["lib/avl.c"],
-                        "include_dirs": ["./lib/"]})],
-    ext_modules=[
-        Extension(
-            'avl',
-            src,
-            define_macros=ext_macros,
-            include_dirs=["lib"],
-        )
-    ]
+    url="https://github.com/samrushing/avl",
+    # libraries=[("avl", {"sources": ["lib/avl.c"],
+    #                     "include_dirs": ["./lib/"]})],
+    ext_modules=cythonize(
+        [
+            Extension(
+                "avl",
+                ["avl.pyx", "lib/avl_.c"],
+                always_allow_keywords=True,
+                include_dirs=["./lib/"],
+                extra_compile_args=["-g"],
+                extra_link_args=["-g"],
+            )
+        ],
+        # profiling=True,
+        gdb_debug=True,
+    ),
 )

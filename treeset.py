@@ -1,12 +1,11 @@
 # -*- Mode: Python -*-
-from __future__ import (
-    division, print_function, absolute_import, unicode_literals)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 import avl
 
+
 # set operations on avl trees.
-
-
 def intersection(a, b):
     ta = avl.newavl(a)
     result = avl.newavl()
@@ -32,9 +31,8 @@ def difference(a, b):
             result.remove(key)
     return result
 
+
 # an abstract set implementation based on avl trees
-
-
 class avl_set:
     "accepts an optional list or set as an initializer"
 

@@ -1,12 +1,12 @@
 # -*- Mode: Python -*-
 # give the avl module a good workout.
-from __future__ import (
-    division, print_function, absolute_import, unicode_literals)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
+import random
 # Standard libraries.
 import sys
 import time
-import random
 
 import avl
 
@@ -16,15 +16,15 @@ class timer:
         self.start = time.time()
 
     def end(self):
-        print('%f seconds' % (time.time() - self.start))
+        print("%f seconds" % (time.time() - self.start))
 
 
 def generate_test_numbers(n=10000):
-    return [random.randint(0, 1000000) for x in xrange(n)]
+    return [random.randint(0, 1000000) for x in range(n)]
 
 
 def fill_up(tree, nums):
-    print('filling up...')
+    print("filling up...")
     t = timer()
     for num in nums:
         tree.insert(num)
@@ -42,7 +42,7 @@ def random_indices_tree(length):
         t2.insert((x, i))
         t.remove(i)
     # return the tree as a list
-    return map(lambda x: x[1], t2)
+    return [x[1] for x in t2]
 
 
 def random_indices_list(length):
@@ -54,15 +54,16 @@ def random_indices_list(length):
         choices.remove(n)
     return result
 
+
 # we're careful to avoid timing the random module.
 
 
 def empty(tree):
     indices = random_indices_tree(len(tree))
-    values = range(len(tree))
+    values = [i for i in range(len(tree))]
     for i in range(len(tree)):
         values[i] = tree[indices[i]]
-    print('emptying the tree...')
+    print("emptying the tree...")
     t = timer()
     for value in values:
         tree.remove(value)
@@ -72,16 +73,16 @@ def empty(tree):
 def random_slice(length):
     left = random.randint(0, length)
     right = random.randint(0, length)
-    if (left > right):
+    if left > right:
         # tuples are just _too_ cool.
         left, right = right, left
     return (left, right)
 
 
 def slice_test(tree, num_slices=100):
-    print('computing slices...')
-    slices = map(random_slice, [len(tree)]*num_slices)
-    print('slicing %d times...' % num_slices)
+    print("computing slices...")
+    slices = map(random_slice, [len(tree)] * num_slices)
+    print("slicing %d times..." % num_slices)
     t = timer()
     for left, right in slices:
         slice = tree[left:right]
@@ -90,7 +91,7 @@ def slice_test(tree, num_slices=100):
 
 def do_test(n):
     tree = avl.newavl()
-    print('generating random numbers...')
+    print("generating random numbers...")
     t = timer()
     nums = generate_test_numbers(n)
     t.end()
@@ -111,5 +112,5 @@ def test_workout():
     iterations = 100
     test_size = 10000
     for i in range(iterations):
-        print('test %d' % i)
+        print("test %d" % i)
         do_test(test_size)
