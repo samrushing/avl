@@ -1,9 +1,10 @@
 # -*- Mode: Python -*-
-from __future__ import division, print_function, absolute_import, unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
+import random
 # Standard libraries.
 import sys
-import random
 
 # prototype and test code for a Python AVL tree module.
 # These trees can be used (simultaneously) as either a list
@@ -105,11 +106,9 @@ class link_node:
     def _print_helper(self, link):
         if link.parent:
             self._print_helper(link.parent)
-        if (
-            link.parent
-            and (link.parent.direction != link.direction)
-            and (link.parent.parent)
-        ):
+        if (link.parent and
+            (link.parent.direction != link.direction) and
+                (link.parent.parent)):
             sys.stdout.write("|" + (" " * (link.width - 1)))
         else:
             sys.stdout.write(" " * link.width)
@@ -200,7 +199,7 @@ class avl_tree(binary_tree):
         self.ops = []
 
     def insert(self, key, index=None):
-        if index == None:
+        if index is None:
             self._insert(key)
         else:
             self._insert_by_index(key, index)
@@ -247,7 +246,7 @@ class avl_tree(binary_tree):
                 if key <= p.key:
                     p.balance = -1
                     p = p.left
-                else:  #  key >= p.key:
+                else:  # key >= p.key:
                     p.balance = 1
                     p = p.right
             # balancing act
@@ -828,11 +827,11 @@ class avl_tree(binary_tree):
     def __getslice__(self, i=None, j=None):
 
         # handle default or negative indices
-        if i == None:
+        if i is None:
             i = 0
         elif i < 0:
             i = i + self.length
-        if j == None:
+        if j is None:
             j = self.length
         elif j < 0:
             j = j + self.length
@@ -892,7 +891,7 @@ class avl_tree(binary_tree):
     # this verifies balance 'manually', and also
     # double-checks each node's <balance> member.
     def _verify_balance(self, node):
-        if node == None:
+        if node is None:
             return 0
         lh = self._verify_balance(node.left)
         rh = self._verify_balance(node.right)
@@ -986,7 +985,7 @@ class tree_iterator:
     def __init__(self, tree, node=None):
         self.tree = tree
         # default to the leftmost node
-        if node == None:
+        if node is None:
             node = tree.tree
             while node.left:
                 node = node.left

@@ -12,7 +12,7 @@ src = ["AVLmodule.c"]
 
 setup(
     name="avl",
-    version="2.2.0a1",
+    version="2.2.0",
     description="AVL Tree Objects for Python",
     author="Samual M Rushing",
     author_email="[hidden]",
@@ -31,7 +31,13 @@ setup(
                 extra_link_args=["-g"],
             )
         ],
-        # profiling=True,
+        compiler_directives={
+            "embedsignature": True,
+            "profile": True,
+            "c_string_type": str,
+            "c_string_encoding": "utf-8",
+            # "convert_range": True
+        },
         gdb_debug=True,
     ),
 )

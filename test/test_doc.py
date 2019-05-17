@@ -7,9 +7,15 @@ from __future__ import (absolute_import, division, print_function,
 
 import sys
 
+import pytest
+
 # DNV GL libraries.
 import avl
-import pytest
+
+if sys.version_info < (3, ):
+    str_ = basestring
+else:
+    str_ = str
 
 
 # Usage:
@@ -53,8 +59,8 @@ def test_4():
 @pytest.fixture
 def random_tree():
     return avl.newavl(
-        [25, 26, 28, 30, 40, 42, 48, 50, 51, 58, 62, 76, 76, 79, 81, 85, 91, 91,
-         91, 99])
+        [25, 26, 28, 30, 40, 42, 48, 50, 51, 58, 62, 76, 76, 79, 81, 85, 91,
+         91, 91, 99])
 
 
 def test_5(random_tree):
@@ -100,7 +106,7 @@ def test_5(random_tree):
 # locate a node of a certain index - it's the number of nodes in the
 # left subtree, plus one.
 def test_print_tree(random_tree):
-    print
+    print()
     random_tree.print_internal_structure()
 
 
@@ -147,33 +153,44 @@ def test_10(random_tree):
 
 @pytest.fixture
 def mixed_tree():
-    t = avl.newavl([i for i in range(10)])
+    def cmpfun(a, b):
+        if isinstance(a, str_) or isinstance(b, str_):
+            a_s = str(a)
+            b_s = str(b)
+            if str(a_s) < str(b_s):
+                return -1
+            if str(a_s) == str(b_s):
+                return 0
+            return 1
+        else:
+            if a < b:
+                return -1
+            if a == b:
+                return 0
+            return 1
+
+    t = avl.newavl([i for i in range(10)], cmpfun)
     t.insert("Hey, where will this go?")
     return t
 
 
 # You can insert any python object:
 def test_11(mixed_tree):
-    if sys.version_info < (3, ):
-        assert str(mixed_tree) == (
-            "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, Hey, where will this go?]"
-        )
-    else:
-        assert str(mixed_tree) == (
-            "[Hey, where will this go?, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
-        )
+    assert str(mixed_tree) == (
+        "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, Hey, where will this go?]"
+    )
 
 
 def test_11_repr(mixed_tree):
     if sys.version_info < (3, ):
-        assert repr(mixed_tree) == (
-            "tree([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, u'Hey, where will this go?']"
-            ", None)"
+        assert repr(mixed_tree)[:-16] == (
+            "tree([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, u'Hey, where will this "
+            "go?'], <function cmpfun at "
         )
     else:
-        assert repr(mixed_tree) == (
-            "tree(['Hey, where will this go?', 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
-            ", None)"
+        assert repr(mixed_tree)[:-16] == (
+            "tree([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'Hey, where will this "
+            "go?'], <function mixed_tree.<locals>.cmpfun at "
         )
 
 
@@ -188,7 +205,7 @@ def test_13(mixed_tree):
 
 
 def test_14_a(mixed_tree):
-    assert mixed_tree.has_key(5)
+    assert mixed_tree.has_key(5)  # noqa
 
 
 def test_14_b(mixed_tree):
@@ -196,7 +213,7 @@ def test_14_b(mixed_tree):
 
 
 def test_15_a(mixed_tree):
-    assert not mixed_tree.has_key(34)
+    assert not mixed_tree.has_key(34)  # noqa
 
 
 def test_15_b(mixed_tree):
@@ -225,20 +242,12 @@ def test_15_b(mixed_tree):
 def test_copy(mixed_tree):
     t2 = avl.newavl(mixed_tree)
     assert t2 is not mixed_tree
-    if sys.version_info < (3, ):
-        assert str(mixed_tree) == (
-            "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, Hey, where will this go?]"
-        )
-        assert str(t2) == (
-            "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, Hey, where will this go?]"
-        )
-    else:
-        assert str(mixed_tree) == (
-            "[Hey, where will this go?, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
-        )
-        assert str(t2) == (
-            "[Hey, where will this go?, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
-        )
+    assert str(mixed_tree) == (
+        "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, Hey, where will this go?]"
+    )
+    assert str(t2) == (
+        "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, Hey, where will this go?]"
+    )
     t2 = None
 
 
@@ -289,6 +298,7 @@ def test_splice(t):
 @pytest.fixture
 def random_tree2():
     return avl.tree([864, 394, 776, 911, 430, 41, 265, 988, 523, 497])
+
 
 def test_span_1(random_tree2):
     assert random_tree2.span(300, 400) == (1, 2)

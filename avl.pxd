@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Copyright (C) 1995 by Sam Rushing <rushing@nightmare.com>
 # Copyright (C) 2005 by Germanischer Lloyd AG
 # Copyright (C) 2001-2005 by IronPort Systems, Inc.

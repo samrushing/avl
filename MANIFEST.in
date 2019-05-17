@@ -1,0 +1,4 @@
+include avl.pyx
+include avl.pxc
+include test/*.py
+include lib/*.[c,h]
