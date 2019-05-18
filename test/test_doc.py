@@ -12,10 +12,15 @@ import pytest
 # DNV GL libraries.
 import avl
 
-if sys.version_info < (3, ):
-    str_ = basestring
-else:
-    str_ = str
+if sys.version_info > (3, ):
+    basestring = str
+
+    def cmp(a, b):
+        if a < b:
+            return -1
+        if a == b:
+            return 0
+        return 1
 
 
 # Usage:
@@ -154,20 +159,9 @@ def test_10(random_tree):
 @pytest.fixture
 def mixed_tree():
     def cmpfun(a, b):
-        if isinstance(a, str_) or isinstance(b, str_):
-            a_s = str(a)
-            b_s = str(b)
-            if str(a_s) < str(b_s):
-                return -1
-            if str(a_s) == str(b_s):
-                return 0
-            return 1
-        else:
-            if a < b:
-                return -1
-            if a == b:
-                return 0
-            return 1
+        if isinstance(a, basestring) or isinstance(b, basestring):
+            return cmp(str(a), str(b))
+        return cmp(a, b)
 
     t = avl.newavl([i for i in range(10)], cmpfun)
     t.insert("Hey, where will this go?")
@@ -326,3 +320,9 @@ def test_at_least(random_tree2):
 # the <key> argument.
 def test_at_most(random_tree2):
     assert random_tree2.at_most(800) == 776
+
+
+def test_2_1_3():
+    z = avl.newavl(None, lambda x, y: cmp(x[0], y[0]))
+    z.insert('hello')
+    z.span('h')
