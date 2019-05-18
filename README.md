@@ -1,7 +1,7 @@
 
-- Note: Although this README mostly talks about Python, the included
-      files `avl_.h` and `avl_.c` implement a completely generic C
-      Library that can easily be used outside of Python.
+> **Note**: Although this README mostly talks about Python, the included
+> files `avl_.h` and `avl_.c` implement a completely generic C Library
+> that can easily be used outside of Python.
 
 
 # AVL Tree Objects for Python
@@ -21,10 +21,11 @@ deletion of any single item, but can also act like sequential lists.
 (In fact, the printed representation is just like that of a list).
 
 Each of the following operations can be done in O(log n) time:
-  i)      Find an item having a given key
-  ii)     Find the kth item, given k
-  iii)    Insert an item at a specified place
-  iv)     Delete a specified item
+
+  1.    Find an item having a given key
+  2.    Find the kth item, given k
+  3.    Insert an item at a specified place
+  4.    Delete a specified item
 
 Other operations are also possible in comparable time, including
 concatenation and splitting.
@@ -58,14 +59,14 @@ you'd want to after becoming a Python convert!). However it was
 necessary to implement a few methods (`getslice`, `concat`) directly
 in `avl.pyc`.
 
-# Building:
+## Building:
 
 Just the usual 
 
   python setup.py install
 
 
-# Usage:
+## Usage:
 
 ```python
 >>> t = avl.newavl()
@@ -175,16 +176,16 @@ the builtin compare is used to order the tree, but by using your own
 objects with your own __cmp__ functions, you can do all sorts of
 interesting things.
 
-- Note:
-  It is important that you not directly change an object stored in an
-  avl tree in a way that would change its ordered position. If you
-  need to do this, first remove() the item, change it, then reinsert
-  it! This is still very fast, as both operations are O(log n)
-
-  The results of such an illegal modification are unspecified, and are
-  likely to crash the program. The only way to completely avoid this
-  problem is to use only immutable types. This restriction seemed too
-  severe to enforce. So be careful out there!
+> **Note:**
+> It is important that you not directly change an object stored in an
+> avl tree in a way that would change its ordered position. If you
+> need to do this, first remove() the item, change it, then reinsert
+> it! This is still very fast, as both operations are O(log n)
+>
+> The results of such an illegal modification are unspecified, and are
+> likely to crash the program. The only way to completely avoid this
+> problem is to use only immutable types. This restriction seemed too
+> severe to enforce. So be careful out there!
 
 
 ```python
@@ -202,7 +203,7 @@ interesting things.
 # it should do)
 ```
 
-# release 2.0 (february 1997)
+## release 2.0 (february 1997)
 
 Major changes to the C library have been applied for this version. The
 comparison function is now a member of the `avl_tree` structure,
@@ -248,11 +249,11 @@ David Ascher <david_ascher@brown.edu> (`at_least()` and `at_most()`).
 754
 ```
 
-# release 2.1.0 (Jun 2005)
+## release 2.1.0 (Jun 2005)
 
 Berthold Höllmann finally spurs me into doing the long-awaited merge.
 
-# release 2.1.1 (Jun 2005)
+## release 2.1.1 (Jun 2005)
 
 Lots of fixes/changes merged from various sources.
 
@@ -272,7 +273,7 @@ And From IronPort:
   - Eric Huss (refcount touch-ups, lots of other work)
   - Sam Rushing
 
-# release 2.1.2 (Aug 2005)
+## release 2.1.2 (Aug 2005)
 
 Fixed a bug reported by Kenneth Duda:
 
@@ -284,13 +285,13 @@ z.span('h')
 
 exceptions.SystemError: 'NULL object passed to Py_BuildValue'
 ```
-# release 2.1.3 (Sep 2005)
+## release 2.1.3 (Sep 2005)
 
 Win32 compilation issue reported by Berthold Höllmann:
 
   - AVLmodule.c(855) : error C2099: initializer is not a constant
 
-# release 2.2.0 (May 2019)
+## release 2.2.0 (May 2019)
 
 Changing wrapper code to Cython, which also makes the module
 compatible to Python 3.
