@@ -25,7 +25,6 @@ setup(
             Extension(
                 "avl",
                 ["avl.pyx", "lib/avl_.c"],
-                always_allow_keywords=True,
                 include_dirs=["./lib/"],
                 extra_compile_args=["-g"],
                 extra_link_args=["-g"],
@@ -33,10 +32,9 @@ setup(
         ],
         compiler_directives={
             "embedsignature": True,
-            "profile": True,
-            "c_string_type": str,
+            # "profile": True,
+            "c_string_type": "str",
             "c_string_encoding": "utf-8",
-            # "convert_range": True
         },
         gdb_debug=True,
     ),

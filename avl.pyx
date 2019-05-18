@@ -226,7 +226,7 @@ cdef int avl_tree_key_printer(char * buffer, void * key):
 cdef class tree:
     cdef avl.avl_tree * tree
     cdef avl.avl_node * node_cache
-    cdef int cache_index
+    cdef Py_ssize_t cache_index
     cpdef readonly object compare_function
 
     def __cinit__(self, args=None, object compare_function=None):
@@ -273,7 +273,7 @@ cdef class tree:
         cdef object s = "["
         cdef object comma = ", "
         cdef avl_node * node
-        cdef int i
+        cdef Py_ssize_t i
 
         if self.tree[0].length == 0:
             return "[]"
@@ -296,7 +296,7 @@ cdef class tree:
         cdef object s
         cdef object comma
         cdef avl_node * node
-        cdef int i
+        cdef Py_ssize_t i
 
         if not self.tree[0].length:
             return "tree([], {!r})".format(self.compare_function)
@@ -322,8 +322,8 @@ cdef class tree:
 
     def __getitem__(self, object arg):
         cdef void * value
-        cdef unsigned int index
-        cdef int i
+        cdef Py_ssize_t index
+        cdef Py_ssize_t i
         cdef unsigned int m
         cdef Py_ssize_t ilow, ihigh, step
         cdef avl_node * node

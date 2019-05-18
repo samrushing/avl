@@ -13,7 +13,7 @@ import pytest
 import avl
 
 if sys.version_info > (3, ):
-    basestring = str
+    unicode = str
 
     def cmp(a, b):
         if a < b:
@@ -159,7 +159,7 @@ def test_10(random_tree):
 @pytest.fixture
 def mixed_tree():
     def cmpfun(a, b):
-        if isinstance(a, basestring) or isinstance(b, basestring):
+        if isinstance(a, unicode) or isinstance(b, unicode):
             return cmp(str(a), str(b))
         return cmp(a, b)
 
