@@ -9,5 +9,6 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install .
+  - pip uninstall -y pytest-isort
 # command to run tests
 script: pytest --pep8 -s
