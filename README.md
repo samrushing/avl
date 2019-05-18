@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/berhoel/avl.svg?branch=master)](https://travis-ci.com/berhoel/avl)
 
 > **Note**: Although this README mostly talks about Python, the included
 > files `avl_.h` and `avl_.c` implement a completely generic C Library
