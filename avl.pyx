@@ -45,6 +45,9 @@ from libc.string cimport strcpy
 cimport avl
 
 
+__version__ = VERSION
+
+
 cdef unicode _text(s):
     if type(s) is unicode:
         # Fast path for most common case(s).
