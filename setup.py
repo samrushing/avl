@@ -26,8 +26,8 @@ setup(
                 "avl",
                 ["avl.pyx", "lib/avl_.c"],
                 include_dirs=["./lib/"],
-                extra_compile_args=["-g"],
-                extra_link_args=["-g"],
+                # extra_compile_args=["-g"],
+                # extra_link_args=["-g"],
             )
         ],
         compiler_directives={
