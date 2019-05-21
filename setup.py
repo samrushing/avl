@@ -1,11 +1,9 @@
 # -*- Mode: Python; coding: iso-8859-1 -*-
 from __future__ import absolute_import, division, print_function
 
-# Standard libraries.
-from distutils.core import Extension, setup
-
 # Third party libraries.
 from Cython.Build import cythonize
+from setuptools import Extension, setup
 
 VERSION = "2.2.0"
 
