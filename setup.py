@@ -1,14 +1,12 @@
 # -*- Mode: Python; coding: iso-8859-1 -*-
 from __future__ import absolute_import, division, print_function
 
-import sys
-# Standard libraries.
 from distutils.core import Extension, setup
 
 # Third party libraries.
 from Cython.Build import cythonize
 
-VERSION = "2.2.0"
+VERSION = "2.2.1"
 
 setup(
     name="avl",
@@ -18,7 +16,7 @@ setup(
     author_email="[hidden]",
     license="BSD",
     url="https://github.com/samrushing/avl",
-    libraries=[("avl", {"sources": ["avl.c"], })],
+    libraries=[("avl", {"sources": ["avl.c"]})],
     ext_modules=cythonize(
         [
             Extension(
