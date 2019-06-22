@@ -7,7 +7,7 @@
 /avl*.so
 /build
 /venv*
-/avl.c
+/avl_module.c
 /avl.html
 /cython_debug
 /.isort.cfg

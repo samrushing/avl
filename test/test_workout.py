@@ -8,6 +8,8 @@ import random
 import sys
 import time
 
+import pytest
+
 import avl
 
 
@@ -34,8 +36,7 @@ def fill_up(tree, nums):
 def random_indices_tree(length):
     t = avl.newavl()
     # build a 'list' of indices
-    for num in range(length):
-        t.insert(num)
+    [t.insert(num) for num in range(length)]
     t2 = avl.newavl()
     for x in range(length):
         i = random.choice(t)
@@ -59,10 +60,7 @@ def random_indices_list(length):
 
 
 def empty(tree):
-    indices = random_indices_tree(len(tree))
-    values = [i for i in range(len(tree))]
-    for i in range(len(tree)):
-        values[i] = tree[indices[i]]
+    values = [tree[i] for i in random_indices_tree(len(tree))]
     print("emptying the tree...")
     t = timer()
     for value in values:
@@ -74,14 +72,14 @@ def random_slice(length):
     left = random.randint(0, length)
     right = random.randint(0, length)
     if left > right:
-        # tuples are just _too_ cool.
-        left, right = right, left
+        return (right, left)
     return (left, right)
 
 
 def slice_test(tree, num_slices=100):
-    print("computing slices...")
-    slices = map(random_slice, [len(tree)] * num_slices)
+    print("computing {} slices...".format(num_slices))
+    l = len(tree)
+    slices = [random_slice(l) for i in range(num_slices)]
     print("slicing %d times..." % num_slices)
     t = timer()
     for left, right in slices:
@@ -100,17 +98,27 @@ def do_test(n):
     empty(tree)
 
 
-def test_workout():
-    # print(sys.argv)
-    # if len(sys.argv) > 1:
-    #     iterations = int(sys.argv[1])
-    #     if len(sys.argv) > 2:
-    #         test_size = int(sys.argv[2])
-    #     else:
-    #         test_size = 10000
-    # else:
-    iterations = 100
-    test_size = 10000
-    for i in range(iterations):
-        print("test %d" % i)
-        do_test(test_size)
+# def test_workout():
+#     # print(sys.argv)
+#     # if len(sys.argv) > 1:
+#     #     iterations = int(sys.argv[1])
+#     #     if len(sys.argv) > 2:
+#     #         test_size = int(sys.argv[2])
+#     #     else:
+#     #         test_size = 10000
+#     # else:
+#     iterations = 100
+#     test_size = 10000
+#     for i in range(iterations):
+#         print("test %d" % i)
+#         do_test(test_size)
+
+
+@pytest.mark.benchmark(
+    min_rounds=1000,
+    warmup=False
+)
+def test_timeit(benchmark):
+    @benchmark
+    def result():
+        do_test(10000)

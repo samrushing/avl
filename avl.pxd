@@ -6,7 +6,7 @@
 # Copyright (C) 2019 by Berthold Höllmann.
 # cython: language_level=2
 
-cdef extern from "avl_.h":
+cdef extern from "avl.h":
 
     ctypedef struct avl_node:
         void *key

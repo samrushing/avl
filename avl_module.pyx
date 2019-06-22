@@ -85,7 +85,7 @@ cdef int tree_from_list(object list,
                         unsigned int low, unsigned int high):
     cdef unsigned int midway = ((high - low) // 2) + low
     cdef int left_height, right_height
-    cdef avl_node * new_node
+    cdef avl.avl_node * new_node
     if low == high:
         address[0] = NULL
         return 1
@@ -122,21 +122,21 @@ cdef int avl_tree_key_free_fun(void * key):
     return 0
 
 
-cdef int tree_from_tree(avl_node ** node,
-                        avl_node * parent,
-                        avl_node ** address,
+cdef int tree_from_tree(avl.avl_node ** node,
+                        avl.avl_node * parent,
+                        avl.avl_node ** address,
                         unsigned int low,
                         unsigned int high):
     cdef unsigned int midway = ((high - low) // 2) + low
     cdef object item
-    cdef avl_node * new_node
+    cdef avl.avl_node * new_node
     cdef long int left_height, right_height
 
     if low == high:
         address[0] = NULL
         return 1
     else:
-        new_node = avl.avl_new_avl_node (NULL, parent)
+        new_node = avl_new_avl_node (NULL, parent)
         if not new_node:
             return -1
         address[0] = new_node
@@ -166,11 +166,11 @@ cdef int tree_from_tree(avl_node ** node,
             return left_height + 1
 
 
-cdef int avl_copy_avl_node(avl_node * source_node,
-                           avl_node * dest_parent,
-                           avl_node ** dest_node) except *:
-    cdef avl_node * new_node
-    new_node = avl.avl_new_avl_node(
+cdef int avl_copy_avl_node(avl.avl_node * source_node,
+                           avl.avl_node * dest_parent,
+                           avl.avl_node ** dest_node) except *:
+    cdef avl.avl_node * new_node
+    new_node = avl_new_avl_node(
         source_node[0].key, dest_parent)
     if not new_node:
         raise MemoryError("Cannot allocate node")
@@ -239,7 +239,7 @@ cdef class tree:
         self.tree = avl_new_avl_tree(avl_key_compare_for_python, <void*>self)
         if not self.tree:
             raise MemoryError("Cannot allocate tree")
-        self.tree[0].root = avl.avl_new_avl_node(NULL, <avl.avl_node*>NULL)
+        self.tree[0].root = avl_new_avl_node(NULL, <avl.avl.avl_node*>NULL)
 
         self.node_cache = NULL
         self.cache_index = 0
@@ -275,7 +275,7 @@ cdef class tree:
     def __str__(self):
         cdef object s = "["
         cdef object comma = ", "
-        cdef avl_node * node
+        cdef avl.avl_node * node
         cdef Py_ssize_t i
 
         if self.tree[0].length == 0:
@@ -298,7 +298,7 @@ cdef class tree:
     def __repr__(self):
         cdef object s
         cdef object comma
-        cdef avl_node * node
+        cdef avl.avl_node * node
         cdef Py_ssize_t i
 
         if not self.tree[0].length:
@@ -329,7 +329,7 @@ cdef class tree:
         cdef Py_ssize_t i
         cdef unsigned int m
         cdef Py_ssize_t ilow, ihigh, step
-        cdef avl_node * node
+        cdef avl.avl_node * node
 
         # Python takes care of negative indices for us, so if
         # i is negative, that is an error.
@@ -412,7 +412,7 @@ cdef class tree:
     def __add__(self, tree other):
         cdef tree self_copy = tree(self.compare_function)
         cdef unsigned int other_node_counter = other.tree[0].length
-        cdef avl_node * other_node
+        cdef avl.avl_node * other_node
         cdef unsigned int ignore
 
         avl_copy_avl_tree(self, self_copy)

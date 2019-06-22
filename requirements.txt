@@ -3,3 +3,4 @@ pytest
 pytest-cache
 pytest-isort
 pytest-pep8
+pytest-benchmark

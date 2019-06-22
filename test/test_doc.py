@@ -177,7 +177,7 @@ def test_11(mixed_tree):
 
 def test_11_repr(mixed_tree):
     if sys.version_info < (3, ):
-        assert repr(mixed_tree)[:-16] == (
+        assert repr(mixed_tree)[:86] == (
             "tree([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, u'Hey, where will this "
             "go?'], <function cmpfun at "
         )

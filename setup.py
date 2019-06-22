@@ -1,6 +1,7 @@
 # -*- Mode: Python; coding: iso-8859-1 -*-
 from __future__ import absolute_import, division, print_function
 
+import sys
 # Standard libraries.
 from distutils.core import Extension, setup
 
@@ -17,13 +18,12 @@ setup(
     author_email="[hidden]",
     license="BSD",
     url="https://github.com/samrushing/avl",
-    libraries=[("avl", {"sources": ["lib/avl_.c"],
-                        "include_dirs": ["./lib/"]})],
+    libraries=[("avl", {"sources": ["avl.c"], })],
     ext_modules=cythonize(
         [
             Extension(
                 "avl",
-                ["avl.pyx", ],
+                ["avl_module.pyx"],
                 include_dirs=["./lib/"],
                 # extra_compile_args=["-g"],
                 # extra_link_args=["-g"],
