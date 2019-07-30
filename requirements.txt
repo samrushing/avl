@@ -1,5 +1,1 @@
 Cython
-pytest
-pytest-cache
-pytest-isort
-pytest-benchmark

@@ -9,7 +9,7 @@ python:
 # command to install dependencies
 install:
   - pip install -r requirements.txt
+  - pip install pytest pytest-cache pytest-benchmark
   - pip install .
-  - pip uninstall -y pytest-isort
 # command to run tests
-script: pytest --pep8 -s
+script: pytest -s
