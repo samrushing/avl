@@ -1,0 +1,5 @@
+include avl_module.pyx
+include avl.pxc
+include test/*.py
+include avl.c
+include avl.h
