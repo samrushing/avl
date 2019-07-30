@@ -1,5 +1,6 @@
 include avl_module.pyx
-include avl.pxc
+include avl.pxd
 include test/*.py
 include avl.c
 include avl.h
+exclude avl_module.c
