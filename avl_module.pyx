@@ -97,7 +97,7 @@ cdef int tree_from_list(object list,
             return -1
         address[0] = new_node
         Py_XINCREF(< PyObject*>item)
-        AVL_SET_RANK(new_node, (midway-low)+1)
+        avl.AVL_SET_RANK(new_node, (midway-low)+1)
         left_height = tree_from_list(
             list, new_node, &(new_node.left), low, midway)
         if left_height < 0:
@@ -107,12 +107,12 @@ cdef int tree_from_list(object list,
         if right_height < 0:
             return -1
         if left_height > right_height:
-            AVL_SET_BALANCE(new_node, -1)
+            avl.AVL_SET_BALANCE(new_node, -1)
             return left_height + 1
         elif right_height > left_height:
-            AVL_SET_BALANCE(new_node, +1)
+            avl.AVL_SET_BALANCE(new_node, +1)
             return right_height + 1
-        AVL_SET_BALANCE(new_node, 0)
+        avl.AVL_SET_BALANCE(new_node, 0)
         return left_height + 1
 
 
@@ -136,7 +136,7 @@ cdef int tree_from_tree(avl.avl_node ** node,
         address[0] = NULL
         return 1
     else:
-        new_node = avl_new_avl_node (NULL, parent)
+        new_node = avl.avl_new_avl_node(NULL, parent)
         if not new_node:
             return -1
         address[0] = new_node
@@ -162,7 +162,7 @@ cdef int tree_from_tree(avl.avl_node ** node,
             avl.AVL_SET_BALANCE(new_node, +1)
             return right_height + 1
         else:
-            AVL_SET_BALANCE(new_node, 0)
+            avl.AVL_SET_BALANCE(new_node, 0)
             return left_height + 1
 
 
@@ -170,7 +170,7 @@ cdef int avl_copy_avl_node(avl.avl_node * source_node,
                            avl.avl_node * dest_parent,
                            avl.avl_node ** dest_node) except *:
     cdef avl.avl_node * new_node
-    new_node = avl_new_avl_node(
+    new_node = avl.avl_new_avl_node(
         source_node[0].key, dest_parent)
     if not new_node:
         raise MemoryError("Cannot allocate node")
@@ -236,10 +236,10 @@ cdef class tree:
         cdef object tmp_list
 
         cdef Py_ssize_t low = 0, length
-        self.tree = avl_new_avl_tree(avl_key_compare_for_python, <void*>self)
+        self.tree = avl.avl_new_avl_tree(avl_key_compare_for_python, <void*>self)
         if not self.tree:
             raise MemoryError("Cannot allocate tree")
-        self.tree[0].root = avl_new_avl_node(NULL, <avl.avl.avl_node*>NULL)
+        self.tree[0].root = avl.avl_new_avl_node(NULL, <avl.avl_node*>NULL)
 
         self.node_cache = NULL
         self.cache_index = 0
@@ -290,7 +290,7 @@ cdef class tree:
             if i > 0:
                 s += comma
             s += str(<object>node[0].key)
-            node = avl_get_successor(node)
+            node = avl.avl_get_successor(node)
 
         s += "]"
         return s
@@ -315,7 +315,7 @@ cdef class tree:
             if i > 0:
                 s += comma
             s += repr(<object>node[0].key)
-            node = avl_get_successor(node)
+            node = avl.avl_get_successor(node)
 
         s += "], {!r})".format(self.compare_function)
         return s
@@ -349,15 +349,20 @@ cdef class tree:
 
             # index cache
             if self.node_cache and index == (self.cache_index + 1):
-                self.node_cache = avl_get_successor(self.node_cache)
+                self.node_cache = avl.avl_get_successor(self.node_cache)
                 self.cache_index += 1
                 value = self.node_cache[0].key
-            if (avl_get_item_by_index(self.tree, index, &value) != 0):
+            if (avl.avl_get_item_by_index(self.tree, index, &value) != 0):
                 raise Exception("error while accessing item")
             return <object>value
         elif PySlice_Check(arg):
+            new_tree = tree(self.compare_function)
+
+            # return empty tree in this degenerate case:
             if (PySlice_GetIndices(
                     arg, self.tree[0].length, &ilow, &ihigh, &step) < 0):
+                if ihigh <= ilow:
+                    return new_tree
                 raise IndexError("invalid slice")
             if step != 1:
                 raise IndexError("slice with step not supported")
@@ -375,12 +380,6 @@ cdef class tree:
                 ihigh = 0
             if ihigh > self.tree[0].length:
                 ihigh = self.tree[0].length
-
-            new_tree = tree(self.compare_function)
-
-            # return empty tree in this degenerate case:
-            if ihigh <= ilow:
-                return new_tree
 
             # locate node <ilow>
             node = self.tree[0].root[0].right
@@ -430,13 +429,13 @@ cdef class tree:
             while other_node_counter:
                 other_node_counter -= 1
                 Py_XINCREF(< PyObject*>other_node[0].key)
-                if avl_insert_by_key(
+                if avl.avl_insert_by_key(
                         self_copy.tree,
                         <void*>other_node[0].key,
                         &ignore):
                     del(self_copy)
                     raise Exception("concatiation failed")
-                other_node = avl_get_successor(other_node)
+                other_node = avl.avl_get_successor(other_node)
         return self_copy
 
     cpdef insert(self, val):
@@ -477,7 +476,7 @@ cdef class tree:
         cdef PyObject * return_value
         "Does the tree contain an item comparing equal to <key>?"
         if self.tree[0].length:
-            result = avl_get_item_by_key(
+            result = avl.avl_get_item_by_key(
                 self.tree, <void*>key, <void**>cython.address(return_value))
             if result == 0:
                 # success
@@ -495,7 +494,7 @@ Returns a pair of indices (low, high) that span the range of <key>"""
             return (0, 0)
         # only one key was specified
         if high_key is None:
-            result = avl_get_span_by_key(
+            result = avl.avl_get_span_by_key(
                 self.tree,
                 <void*>low_key,
                 &low,
@@ -506,7 +505,7 @@ Returns a pair of indices (low, high) that span the range of <key>"""
             else:
                 raise Exception("error while locating key span")
         # they specified two keys
-        result = avl_get_span_by_two_keys(
+        result = avl.avl_get_span_by_two_keys(
             self.tree,
             <void*>low_key,
             <void*>high_key,
@@ -525,7 +524,7 @@ argument"""
         cdef int result
 
         if self.tree[0].length:
-            result = avl_get_item_by_key_least(
+            result = avl.avl_get_item_by_key_least(
                 self.tree,
                 <void*>key_val,
                 <void**>&return_value)
@@ -542,7 +541,7 @@ argument"""
         cdef int result
 
         if self.tree[0].length:
-            result = avl_get_item_by_key_most(
+            result = avl.avl_get_item_by_key_most(
                 self.tree,
                 <void*>key_val,
                 <void**>&return_value)
@@ -554,10 +553,10 @@ argument"""
 
     cpdef bint verify(self):
         """Verify the internal structure of the AVL tree (testing only)"""
-        return avl_verify(self.tree) == 0
+        return avl.avl_verify(self.tree) == 0
 
     cpdef print_internal_structure(self):
-        avl_print_tree(self.tree, avl_tree_key_printer)
+        avl.avl_print_tree(self.tree, avl_tree_key_printer)
 
 
 def newavl(arg=None, compare_function=None):

@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 """test cases from documentation.
 """
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+from __future__ import (
+    division, print_function, absolute_import, unicode_literals)
 
+# Standard libraries.
 import sys
 
-import pytest
-
-# DNV GL libraries.
+# Third party libraries.
 import avl
+import pytest
 
 if sys.version_info > (3, ):
     unicode = str
@@ -150,6 +150,18 @@ def test_8():
 # [If you want a list, use the slice_as_list() method]
 def test_9(random_tree):
     assert str(random_tree[3:8]) == "[30, 40, 42, 48, 50]"
+
+
+def test_degenerated_slice_1(random_tree):
+    assert str(random_tree[8:8]) == "[]"
+
+
+def test_degenerated_slice_2(random_tree):
+    assert str(random_tree[200:200]) == "[]"
+
+
+def test_degenerated_slice_3(random_tree):
+    assert str(random_tree[200:100]) == "[]"
 
 
 def test_10(random_tree):
